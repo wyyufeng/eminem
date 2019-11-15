@@ -1,0 +1,23 @@
+{
+  "name": "em-template",
+  "version": "0.0.0",
+  "description": "> TODO: description",
+  "author": "wyyufeng <wyyufeng@gmail.com>",
+  "homepage": "",
+  "license": "ISC",
+  "main": "lib/template.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "em-utils": "^0.0.0",
+    "fs-extra": "^8.1.0"
+  }
+}

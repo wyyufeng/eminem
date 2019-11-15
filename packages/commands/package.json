@@ -1,0 +1,30 @@
+{
+  "name": "em-commands",
+  "version": "0.0.0",
+  "description": "> TODO: description",
+  "author": "wyyufeng <wyyufeng@gmail.com>",
+  "homepage": "",
+  "license": "ISC",
+  "main": "lib/em.js",
+  "bin": {
+    "em": "lib/em.js"
+  },
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "chalk": "^3.0.0",
+    "commander": "^4.0.1",
+    "em-tasks": "^0.0.0",
+    "fs-extra": "^8.1.0",
+    "inquirer": "^7.0.0",
+    "validate-npm-package-name": "^3.0.0"
+  }
+}
