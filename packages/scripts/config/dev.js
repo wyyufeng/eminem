@@ -6,7 +6,7 @@ function devServer(options) {
       .disableHostCheck(true)
       .compress(true)
       .clientLogLevel("none")
-      .contentBase(path.resolve(process.cwd(), "./public"))
+      .contentBase(path.resolve(options.appDirectory, "./public"))
       // .public(options)
       .watchContentBase(true)
       .hot(true)

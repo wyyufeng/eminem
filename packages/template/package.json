@@ -17,7 +17,6 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "em-utils": "^0.0.0",
     "fs-extra": "^8.1.0"
   }
 }

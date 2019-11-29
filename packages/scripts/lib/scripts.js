@@ -8,7 +8,6 @@ const scriptIndex = args.findIndex(x => x === "build" || x === "serve");
 const script = scriptIndex === -1 ? args[0] : args[scriptIndex];
 const path = require("path");
 if (["serve", "build"].includes(script)) {
-  console.log(path.resolve(__dirname, `./${script}.js`));
   const result = spawn.sync(
     "node ",
     [path.resolve(__dirname, `./${script}.js`)],

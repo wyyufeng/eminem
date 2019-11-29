@@ -22,9 +22,11 @@
   "dependencies": {
     "chalk": "^3.0.0",
     "commander": "^4.0.1",
-    "em-tasks": "^0.0.0",
+    "file-loader": "^5.0.2",
     "fs-extra": "^8.1.0",
     "inquirer": "^7.0.0",
+    "ora": "^4.0.3",
+    "url-loader": "^3.0.0",
     "validate-npm-package-name": "^3.0.0"
   }
 }
