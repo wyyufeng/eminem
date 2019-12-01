@@ -6,7 +6,7 @@ const fse = require("fs-extra");
 const inquirer = require("inquirer");
 const ora = require("ora");
 const { exec } = require("child_process");
-const { createTemplateFile, createTemplate } = require("em-template");
+const { createAppTemplateFile, createProjectTemplate } = require("em-template");
 process.on("unhandledRejection", err => {
   throw err;
 });
@@ -101,8 +101,8 @@ module.exports = class Create extends Task {
     console.log("正在初始化项目...");
     try {
       const { projectDir, name } = this.project;
-      createTemplate(projectDir);
-      createTemplateFile(this.template, projectDir, "index");
+      createProjectTemplate(projectDir);
+      createAppTemplateFile(this.template, projectDir, "index");
       const eminemrc = {
         app: [
           {
@@ -154,7 +154,7 @@ module.exports = class Create extends Task {
     process.chdir(projectDir);
     process.stdout.write("\n");
     // eslint-disable-next-line no-console
-    const o = ora("正在安装依赖!").start();
+    const o = ora("正在安装依赖...").start();
     return new Promise((resolve, reject) => {
       const scriptStr = `npm install ${dependencies.join(
         " "
@@ -169,7 +169,7 @@ module.exports = class Create extends Task {
           process.stdout.write("\n");
           console.log(err);
           process.stdout.write("\n");
-          o.fail("依赖安装失败！");
+          o.fail("嘤嘤嘤~ 依赖安装失败！");
 
           reject(err);
         }

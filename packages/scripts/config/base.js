@@ -81,7 +81,8 @@ function htmlPlugin(options) {
 function javascriptLoader() {
   return function(context) {
     context.module
-      .rule("compile")
+      .rule("modules")
+      .oneOf("javascript")
       .test(/\.(js|mjs|jsx|ts|tsx)$/)
       .use("babel")
       .loader(require.resolve("babel-loader"))
@@ -90,6 +91,7 @@ function javascriptLoader() {
         cacheCompression: false,
         presets: [require("@babel/preset-env"), require("@babel/preset-react")]
       });
+
     return context;
   };
 }
@@ -97,7 +99,8 @@ function javascriptLoader() {
 function cssLoader(options) {
   return function(context) {
     context.module
-      .rule("csscompile")
+      .rule("modules")
+      .oneOf("css")
       .test(/\.css$/)
       .when(
         options.isEnvProduction,
@@ -135,6 +138,7 @@ function cssLoader(options) {
           require("postcss-normalize")
         ]
       })
+
       .end();
     return context;
   };
@@ -142,7 +146,8 @@ function cssLoader(options) {
 function sassLoader(options) {
   return context => {
     context.module
-      .rule("scsscompile")
+      .rule("modules")
+      .oneOf("sass")
       .test(/\.scss$/)
       .when(
         options.isEnvProduction,
@@ -191,7 +196,8 @@ function sassLoader(options) {
 function imageLoader() {
   return context => {
     context.module
-      .rule("images")
+      .rule("modules")
+      .oneOf("image")
       .test([/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/])
       .use("url-loader")
       .loader(require.resolve("url-loader"))
@@ -208,18 +214,9 @@ function imageLoader() {
 function fileLoader() {
   return context => {
     context.module
-      .rule("file")
-      .exclude.add([
-        /\.(js|mjs|jsx|ts|tsx)$/,
-        /\.html$/,
-        /\.json$/,
-        /\.scss$/,
-        /\.css$/,
-        /\.bmp$/,
-        /\.gif$/,
-        /\.jpe?g$/,
-        /\.png$/
-      ])
+      .rule("modules")
+      .oneOf("file")
+      .exclude.add([/\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/])
       .end()
       .use("file-loader")
       .loader(require.resolve("file-loader"))
@@ -231,19 +228,38 @@ function fileLoader() {
   };
 }
 
+function resolveConfig(options) {
+  return context => {
+    context.resolve.modules.values("node_modules");
+    return context;
+  };
+}
+
 function globalConfig(options) {
   return context => {
     context.when(
       options.isEnvProduction,
       config => {
         config.devtool("source-map");
+        config.bail = true;
         context.mode("production");
       },
       config => {
+        config.bail = false;
         config.devtool("cheap-module-source-map");
         context.mode("development");
       }
     );
+
+    context.node
+      .set("module", "empty")
+      .set("dgram", "empty")
+      .set("dns", "empty")
+      .set("fs", "empty")
+      .set("http2", "empty")
+      .set("net", "empty")
+      .set("tls", "empty")
+      .set("child_process", "empty");
 
     return context;
   };
@@ -258,5 +274,6 @@ module.exports = {
   cssLoader,
   sassLoader,
   imageLoader,
-  fileLoader
+  fileLoader,
+  resolveConfig
 };
