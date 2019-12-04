@@ -1,10 +1,10 @@
 {
-  "name": "em-commands",
+  "name": "@mpfe/em-commands",
   "version": "0.0.0",
-  "description": "> TODO: description",
+  "description": "em-commands",
   "author": "wyyufeng <wyyufeng@gmail.com>",
   "homepage": "",
-  "license": "ISC",
+  "license": "MIT",
   "main": "lib/em.js",
   "bin": {
     "em": "lib/em.js"
@@ -13,12 +13,12 @@
     "lib": "lib",
     "test": "__tests__"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "files": [
     "lib"
   ],
-  "scripts": {
-    "test": "echo \"Error: run tests from root\" && exit 1"
-  },
   "dependencies": {
     "chalk": "^3.0.0",
     "commander": "^4.0.1",

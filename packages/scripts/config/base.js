@@ -185,9 +185,7 @@ function sassLoader(options) {
       .end()
       .use("scss")
       .loader(require.resolve("sass-loader"))
-      .options({
-        importLoaders: 2
-      })
+      .options({})
       .end();
     return context;
   };

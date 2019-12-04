@@ -1,20 +1,19 @@
 {
-  "name": "em-template",
+  "name": "@mpfe/em-template",
   "version": "0.0.0",
-  "description": "> TODO: description",
+  "description": "em-template",
   "author": "wyyufeng <wyyufeng@gmail.com>",
   "homepage": "",
-  "license": "ISC",
+  "license": "MIT",
   "main": "lib/template.js",
   "directories": {
-    "lib": "lib",
-    "test": "__tests__"
+    "lib": "lib"
   },
   "files": [
     "lib"
   ],
-  "scripts": {
-    "test": "echo \"Error: run tests from root\" && exit 1"
+  "publishConfig": {
+    "access": "public"
   },
   "dependencies": {
     "fs-extra": "^8.1.0"

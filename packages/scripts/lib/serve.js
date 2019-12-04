@@ -54,12 +54,6 @@ choosePort(host, port).then(port => {
   let compiler;
   let isFirstCompile = true;
   try {
-    console.log(
-      JSON.stringify(ctxWrapper(context).toConfig(), null, 4, {
-        spaces: 4,
-        replacer: null
-      })
-    );
     compiler = webpack(ctxWrapper(context).toConfig());
   } catch (err) {
     console.log(chalk.red("Failed to compile."));
