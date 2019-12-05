@@ -6,7 +6,10 @@ const fse = require("fs-extra");
 const inquirer = require("inquirer");
 const ora = require("ora");
 const { exec } = require("child_process");
-const { createAppTemplateFile, createProjectTemplate } = require("em-template");
+const {
+  createAppTemplateFile,
+  createProjectTemplate
+} = require("@mpfe/em-template");
 process.on("unhandledRejection", err => {
   throw err;
 });
@@ -104,6 +107,7 @@ module.exports = class Create extends Task {
       createProjectTemplate(projectDir);
       createAppTemplateFile(this.template, projectDir, "index");
       const eminemrc = {
+        version: "0.0.0",
         app: [
           {
             name: "index",
@@ -117,9 +121,14 @@ module.exports = class Create extends Task {
         spaces: 4,
         replacer: null
       });
-      const dependencies = [];
+      const dependencies = ["@mpfe/em-scripts"];
       const pkg = {
-        name: name
+        name: name,
+        scripts: {
+          start: "em-scripts serve",
+          build: "em-scripts build",
+          analyse: "em-scripts analyse"
+        }
       };
       if (this.template === "reactapp") {
         dependencies.push("react", "react-dom");

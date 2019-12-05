@@ -2,7 +2,7 @@ const Task = require("./task");
 const inquirer = require("inquirer");
 const fs = require("fs-extra");
 const chalk = require("chalk");
-const { createTemplateFile } = require("em-template");
+const { createTemplateFile } = require("@mpfe/em-template");
 process.on("unhandledRejection", err => {
   throw err;
 });

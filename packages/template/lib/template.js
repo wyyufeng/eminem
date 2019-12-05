@@ -14,7 +14,7 @@ function createAppTemplateFile(type = "vanilla", projectDir, name) {
   );
   fs.copyFileSync(
     path.resolve(__dirname, "./index.css"),
-    path.resolve(publicDir, "./index.css")
+    path.resolve(dest, "./index.css")
   );
 }
 

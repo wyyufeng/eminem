@@ -1,6 +1,6 @@
 const TerserPlugin = require("terser-webpack-plugin");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
-
+const webpack = require("webpack");
 function optimization(options) {
   return function(context) {
     context.optimization
@@ -36,11 +36,29 @@ function optimization(options) {
         {
           cssProcessorOptions: {}
         }
-      ]);
+      ])
+      .end()
+      .splitChunks({
+        chunks: "all",
+        name: false
+      })
+      .runtimeChunk(true);
     return context;
   };
 }
-
+const handler = (percentage, message, ...args) => {
+  // e.g. Output each progress message directly to the console:
+  console.info(percentage, message, ...args);
+};
+function plugins() {
+  return context => {
+    context
+      .plugin("ProgressPlugin")
+      .use(webpack.ProgressPlugin, [handler])
+      .end();
+  };
+}
 module.exports = {
-  optimization
+  optimization,
+  plugins
 };

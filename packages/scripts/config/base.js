@@ -1,6 +1,8 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const webpack = require("webpack");
 const path = require("path");
+const getClientEnvironment = require("./env");
 function entry(options) {
   return function(context) {
     options.app.forEach(entry => {
@@ -26,7 +28,7 @@ function output(options) {
         options.isEnvProduction,
         config =>
           config
-            .path(path.resolve(options.appDirectory, "build"))
+            .path(options.appBuild)
             .filename("js/[name].[contenthash:8].js")
             .chunkFilename("js/[name].[contenthash:8].chunk.js"),
         config =>
@@ -225,10 +227,41 @@ function fileLoader() {
     return context;
   };
 }
+function eslintLoader(options) {
+  return context => {
+    context.module
+      .rule("eslint")
+      .test(/\.(js|mjs|jsx|ts|tsx)$/)
+      .include.add(options.appSrc)
+      .end()
+      .enforce("pre")
+      .use("eslint-loader")
 
+      .loader(require.resolve("eslint-loader"))
+      .options({
+        formatter: require.resolve("react-dev-utils/eslintFormatter"),
+        eslintPath: require.resolve("eslint")
+      })
+      .end();
+    return context;
+  };
+}
 function resolveConfig(options) {
   return context => {
     context.resolve.modules.values("node_modules");
+    context.resolve.alias.set("@", options.appSrc);
+    return context;
+  };
+}
+
+function pluginConfig() {
+  return context => {
+    context
+      .plugin("IgnorePlugin")
+      .use(webpack.IgnorePlugin, [/^\.\/locale$/, /moment$/])
+      .end()
+      .plugin("DefinePlugin")
+      .use(webpack.DefinePlugin, [getClientEnvironment()]);
     return context;
   };
 }
@@ -273,5 +306,7 @@ module.exports = {
   sassLoader,
   imageLoader,
   fileLoader,
-  resolveConfig
+  resolveConfig,
+  pluginConfig,
+  eslintLoader
 };

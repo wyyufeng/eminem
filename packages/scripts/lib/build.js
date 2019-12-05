@@ -11,23 +11,31 @@ const filesize = require("filesize");
 const fs = require("fs-extra");
 const path = require("path");
 const chalk = require("chalk");
-const appDirectory = fs.realpathSync(process.cwd());
-const resolveApp = relativePath => path.resolve(appDirectory, relativePath);
 const gzipSize = require("gzip-size");
 const flatten = require("array-flatten").flatten;
+const logUpdate = require("log-update");
+
+const util = require("./util");
 const WARN_AFTER_BUNDLE_GZIP_SIZE = 200 * 1024; //kb
 let project;
 try {
-  project = fs.readJSONSync(resolveApp(".eminemrc"));
+  project = fs.readJSONSync(util.resolveApp(".eminemrc"));
 } catch (error) {
   console.log();
   console.error("嘤嘤嘤~~当前不是eminem的工作目录！");
   process.exit(1);
 }
-project.isEnvProduction = true;
-project.isEnvDevelopment = false;
-project.appDirectory = appDirectory;
 
+function setup() {
+  util.version.inc();
+  project.isEnvProduction = true;
+  project.isEnvDevelopment = false;
+  project.appDirectory = util.paths.appPath;
+  project.appSrc = util.paths.appSrc;
+  project.appBuild = util.paths.appBuild;
+  project.appBuildFileName = util.paths.appBuildFileName;
+}
+setup();
 build();
 
 function build() {
@@ -47,9 +55,20 @@ function build() {
     console.log();
     process.exit(1);
   }
-  const buildDir = path.resolve(appDirectory, "build");
+  const buildDir = util.paths.appBuild;
+
   fs.emptyDirSync(buildDir);
   console.log("正在构建生产环境包...");
+  new webpack.ProgressPlugin(percent => {
+    logUpdate(
+      `努力building中~~  ${percent * 100}% \n \n [${chalk.greenBright(
+        "♥".repeat(parseInt(percent * 100 * 0.25))
+      )}]`
+    );
+    if (percent === 1) {
+      logUpdate.clear();
+    }
+  }).apply(compiler);
   compiler.run((err, stats) => {
     if (err) {
       console.log(`嘤嘤嘤~ 构建失败！`);
@@ -66,6 +85,8 @@ function build() {
       console.warn(info.warnings);
     }
     printFileSize(buildDir);
+    console.log("构建完成！");
+    // console.log(`${}`)
     fs.writeJSON("./stats.json", stats.toJson());
   });
 }
@@ -79,7 +100,7 @@ function printFileSize(dir) {
     return a;
   }, "");
   console.log();
-  console.log("文件Gzip后大小：");
+  console.log("文件经过Gzip压缩后大小为：");
   console.log();
   console.log(msg);
   console.log();
@@ -112,7 +133,7 @@ function measureFileSize(file) {
         return measureFileSize(path.resolve(file, f));
       } else {
         return {
-          file: path.resolve(file, f).split("build")[1],
+          file: path.resolve(file, f).split(util.paths.appBuildFileName)[1],
           size: gzipSize.fileSync(path.resolve(file, f))
         };
       }

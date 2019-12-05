@@ -11,13 +11,9 @@ const context = require("../config/context");
 const webpack = require("webpack");
 const WebpackDevServer = require("webpack-dev-server");
 const fs = require("fs-extra");
-const path = require("path");
 const chalk = require("chalk");
-const printBuildError = require("react-dev-utils/printBuildError");
 const formatWebpackMessages = require("react-dev-utils/formatWebpackMessages");
-
-const appDirectory = fs.realpathSync(process.cwd());
-const resolveApp = relativePath => path.resolve(appDirectory, relativePath);
+const util = require("./util");
 const {
   choosePort,
   prepareUrls
@@ -25,18 +21,22 @@ const {
 const clearConsole = require("react-dev-utils/clearConsole");
 let project;
 try {
-  project = fs.readJSONSync(resolveApp(".eminemrc"));
+  project = fs.readJSONSync(util.resolveApp(".eminemrc"));
 } catch (error) {
   console.log();
   console.error("嘤嘤嘤~~当前不是eminem的工作目录！");
   process.exit(1);
 }
 // 记录当前环境
-project.isEnvProduction = false;
-project.isEnvDevelopment = true;
-project.appDirectory = appDirectory;
+function setup() {
+  project.isEnvProduction = false;
+  project.isEnvDevelopment = true;
+  project.appDirectory = util.paths.appPath;
+  project.appSrc = util.paths.appSrc;
+}
 const port = 3000;
 const host = "0.0.0.0";
+setup();
 
 choosePort(host, port).then(port => {
   if (port == null) {
@@ -54,6 +54,7 @@ choosePort(host, port).then(port => {
   let compiler;
   let isFirstCompile = true;
   try {
+    // console.log(JSON.stringify(ctxWrapper(context).toConfig(), null, 4));
     compiler = webpack(ctxWrapper(context).toConfig());
   } catch (err) {
     console.log(chalk.red("Failed to compile."));

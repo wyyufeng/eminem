@@ -1,5 +1,7 @@
 const path = require("path");
 const webpack = require("webpack");
+const CaseSensitivePathsPlugin = require("case-sensitive-paths-webpack-plugin");
+
 function devServer(options) {
   return context => {
     context.devServer
@@ -19,7 +21,12 @@ function devServer(options) {
 }
 function plugins() {
   return context => {
-    context.plugin("hotload").use(webpack.HotModuleReplacementPlugin);
+    context
+      .plugin("HotModuleReplacementPlugin")
+      .use(webpack.HotModuleReplacementPlugin)
+      .end()
+      .plugin("CaseSensitivePathsPlugin")
+      .use(CaseSensitivePathsPlugin);
   };
 }
 module.exports = {
