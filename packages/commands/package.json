@@ -28,5 +28,6 @@
     "ora": "^4.0.3",
     "url-loader": "^3.0.0",
     "validate-npm-package-name": "^3.0.0"
-  }
+  },
+  "gitHead": "3dde5fc7054cd86542ef3a916fada7490a6d4d12"
 }

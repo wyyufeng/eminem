@@ -17,5 +17,6 @@
   },
   "dependencies": {
     "fs-extra": "^8.1.0"
-  }
+  },
+  "gitHead": "3dde5fc7054cd86542ef3a916fada7490a6d4d12"
 }
