@@ -19,8 +19,14 @@ program
     new ProjectCreator(name, template);
   });
 
-program.command("generate <schematic>").action((schematic, arg) => {
+program.command("generate <schematic>").action(schematic => {
   new Generator(schematic);
 });
-
+program.on("command:*", function() {
+  console.error(
+    "Invalid command: %s\nSee --help for a list of available commands.",
+    program.args.join(" ")
+  );
+  process.exit(1);
+});
 program.parse(process.argv);

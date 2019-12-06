@@ -63,6 +63,7 @@ choosePort(host, port).then(port => {
     console.log();
     process.exit(1);
   }
+  new TestPlugin().apply(compiler);
   compiler.hooks.invalid.tap("invalid", () => {
     clearConsole();
     console.log("Compiling...");
@@ -81,17 +82,18 @@ choosePort(host, port).then(port => {
       console.log(messages.errors.join("\n\n"));
       return;
     }
-    if (stats.hasWarnings()) {
-      console.log(chalk.yellow("Compiled with warnings.\n"));
-      console.log(messages.warnings.join("\n\n"));
-    }
+
     if (isFirstCompile) {
-      console.log("项目启动成功，运行在如下地址：");
+      console.log("项目启动成功，访问如下地址即可访问页面：");
       console.log();
       console.log(chalk.blueBright(`局域网:  -  ${urls.lanUrlForTerminal}`));
       console.log(chalk.blueBright(`本  机:  -  ${urls.localUrlForBrowser}`));
       isFirstCompile = false;
     } else {
+      if (stats.hasWarnings()) {
+        console.log(chalk.yellow("Compiled with warnings.\n"));
+        console.log(messages.warnings.join("\n\n"));
+      }
       console.log(chalk.greenBright("Compiled successfully!"));
     }
   });
@@ -109,3 +111,12 @@ choosePort(host, port).then(port => {
     console.log(chalk.greenBright("Starting the development server...\n"));
   });
 });
+
+class TestPlugin {
+  apply(compiler) {
+    compiler.hooks.emit.tapAsync("TestPlugin", (compilation, callback) => {
+      console.log(compilation.assets.map());
+      callback();
+    });
+  }
+}

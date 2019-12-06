@@ -1,4 +1,6 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const ImageminPlugin = require("imagemin-webpack-plugin").default;
+const imageminWebp = require("imagemin-webp");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const webpack = require("webpack");
 const path = require("path");
@@ -261,7 +263,11 @@ function pluginConfig() {
       .use(webpack.IgnorePlugin, [/^\.\/locale$/, /moment$/])
       .end()
       .plugin("DefinePlugin")
-      .use(webpack.DefinePlugin, [getClientEnvironment()]);
+      .use(webpack.DefinePlugin, [getClientEnvironment()])
+      .end();
+    // .plugin("imagemin")
+    // .use(ImageminPlugin, [{ test: /.jpg/, plugins: [imageminWebp()] }])
+    // .end();
     return context;
   };
 }

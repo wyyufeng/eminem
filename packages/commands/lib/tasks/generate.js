@@ -2,7 +2,7 @@ const Task = require("./task");
 const inquirer = require("inquirer");
 const fs = require("fs-extra");
 const chalk = require("chalk");
-const { createTemplateFile } = require("@mpfe/em-template");
+const { createAppTemplateFile } = require("@mpfe/em-template");
 process.on("unhandledRejection", err => {
   throw err;
 });
@@ -82,7 +82,7 @@ class GenerateApp extends Task {
     this.writeConfig(rcJson);
     console.log(chalk.yellow(`正在写入模板...`));
     fs.mkdirSync(this.getAppDir(answers.appName));
-    createTemplateFile(answers.template, this.projectRoot, answers.appName);
+    createAppTemplateFile(answers.template, this.projectRoot, answers.appName);
     console.log(chalk.greenBright(`${answers.appName}创建成功！`));
   }
 }
