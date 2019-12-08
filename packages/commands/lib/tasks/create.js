@@ -6,6 +6,8 @@ const fse = require("fs-extra");
 const inquirer = require("inquirer");
 const ora = require("ora");
 const { exec } = require("child_process");
+const spawn = require("cross-spawn");
+
 const {
   createAppTemplateFile,
   createProjectTemplate
@@ -163,25 +165,41 @@ module.exports = class Create extends Task {
     process.chdir(projectDir);
     process.stdout.write("\n");
     // eslint-disable-next-line no-console
-    const o = ora("正在安装依赖...").start();
+
+    const command = "npm";
     return new Promise((resolve, reject) => {
-      const scriptStr = `npm install ${dependencies.join(
-        " "
-      )} --registry https://registry.npm.taobao.org`;
-      exec(scriptStr, err => {
-        if (!err) {
+      console.log("正在设置npm参数...");
+      spawn.sync(command, [
+        "config",
+        "set",
+        "sharp_dist_base_url",
+        "https://npm.taobao.org/mirrors/sharp-libvips/v8.8.1/",
+        "sass_binary_site",
+        "https://npm.taobao.org/mirrors/node-sass/",
+        { stdio: "inherit" }
+      ]);
+      const args = [
+        "install",
+        ...dependencies,
+        "--registry",
+        "https://registry.npm.taobao.org"
+      ];
+      const o = ora("正在安装依赖...").start();
+      const child = spawn.sync(command, args, { stdio: "inherit" });
+      child.on("close", code => {
+        if (code !== 0) {
           process.stdout.write("\n");
-          o.succeed("依赖安装完成!");
-          process.stdout.write("\n");
-          resolve();
-        } else {
-          process.stdout.write("\n");
-          console.log(err);
+          console.log(`${command} ${args.join(" ")}`);
           process.stdout.write("\n");
           o.fail("嘤嘤嘤~ 依赖安装失败！");
 
-          reject(err);
+          reject(`${command} ${args.join(" ")}`);
+          return;
         }
+        process.stdout.write("\n");
+        o.succeed("依赖安装完成!");
+        process.stdout.write("\n");
+        resolve();
       });
     });
   }

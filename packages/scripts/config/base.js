@@ -1,10 +1,11 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const ImageminPlugin = require("imagemin-webpack-plugin").default;
-const imageminWebp = require("imagemin-webp");
+const FriendlyErrorsWebpackPlugin = require("friendly-errors-webpack-plugin");
+
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const webpack = require("webpack");
 const path = require("path");
 const getClientEnvironment = require("./env");
+
 function entry(options) {
   return function(context) {
     options.app.forEach(entry => {
@@ -106,6 +107,7 @@ function cssLoader(options) {
       .rule("modules")
       .oneOf("css")
       .test(/\.css$/)
+
       .when(
         options.isEnvProduction,
         config => {
@@ -140,6 +142,7 @@ function cssLoader(options) {
             stage: 3
           }),
           require("postcss-normalize")
+          // require("../plugins/PostcssPlugin")
         ]
       })
 
@@ -153,6 +156,7 @@ function sassLoader(options) {
       .rule("modules")
       .oneOf("sass")
       .test(/\.scss$/)
+
       .when(
         options.isEnvProduction,
         config => {
@@ -200,6 +204,7 @@ function imageLoader() {
     context.module
       .rule("modules")
       .oneOf("image")
+
       .test([/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/])
       .use("url-loader")
       .loader(require.resolve("url-loader"))
@@ -264,10 +269,18 @@ function pluginConfig() {
       .end()
       .plugin("DefinePlugin")
       .use(webpack.DefinePlugin, [getClientEnvironment()])
+      .end()
+      .plugin("MiniCssExtractPlugin")
+      .use(MiniCssExtractPlugin, [
+        {
+          filename: "css/[name].[contenthash:8].css",
+          chunkFilename: "css/[name].[contenthash:8].chunk.css"
+        }
+      ])
+      .end()
+      .plugin("FriendlyErrorsWebpackPlugin")
+      .use(FriendlyErrorsWebpackPlugin)
       .end();
-    // .plugin("imagemin")
-    // .use(ImageminPlugin, [{ test: /.jpg/, plugins: [imageminWebp()] }])
-    // .end();
     return context;
   };
 }

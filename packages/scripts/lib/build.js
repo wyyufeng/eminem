@@ -14,7 +14,6 @@ const chalk = require("chalk");
 const gzipSize = require("gzip-size");
 const flatten = require("array-flatten").flatten;
 const logUpdate = require("log-update");
-
 const util = require("./util");
 const WARN_AFTER_BUNDLE_GZIP_SIZE = 200 * 1024; //kb
 let project;
@@ -49,44 +48,23 @@ function build() {
   try {
     compiler = webpack(ctxWrapper(context).toConfig());
   } catch (err) {
-    console.log(chalk.red("Failed to compile."));
-    console.log();
     console.log(err.message || err);
-    console.log();
     process.exit(1);
   }
   const buildDir = util.paths.appBuild;
 
   fs.emptyDirSync(buildDir);
   console.log("正在构建生产环境包...");
-  new webpack.ProgressPlugin(percent => {
-    logUpdate(
-      `努力building中~~  ${percent * 100}% \n \n [${chalk.greenBright(
-        "♥".repeat(parseInt(percent * 100 * 0.25))
-      )}]`
-    );
-    if (percent === 1) {
-      logUpdate.clear();
-    }
-  }).apply(compiler);
+
   compiler.run((err, stats) => {
     if (err) {
       console.log(`嘤嘤嘤~ 构建失败！`);
       console.log(err.message);
       process.exit(1);
     }
-    const info = stats.toJson();
 
-    if (stats.hasErrors()) {
-      return console.error(info.errors);
-    }
-
-    if (stats.hasWarnings()) {
-      console.warn(info.warnings);
-    }
     printFileSize(buildDir);
     console.log("构建完成！");
-    // console.log(`${}`)
     fs.writeJSON("./stats.json", stats.toJson());
   });
 }
@@ -145,4 +123,5 @@ function measureFileSize(file) {
     };
   }
 }
+
 module.exports = build;
