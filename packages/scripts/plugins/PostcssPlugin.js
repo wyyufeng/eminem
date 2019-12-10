@@ -1,5 +1,4 @@
 const postcss = require("postcss");
-
 const testProps = ["background", "background-image"];
 function testFunc(prop) {
   return testProps.includes(prop);

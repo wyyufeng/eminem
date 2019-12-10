@@ -1,6 +1,5 @@
 const TerserPlugin = require("terser-webpack-plugin");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
-const webpack = require("webpack");
 const WebpPlugin = require("../plugins/WebpPlugin");
 function optimization(options) {
   return function(context) {
@@ -48,7 +47,7 @@ function optimization(options) {
   };
 }
 
-function plugins() {
+function prodPlugins() {
   return context => {
     context
       .plugin("WebpPlugin")
@@ -59,5 +58,5 @@ function plugins() {
 }
 module.exports = {
   optimization,
-  plugins
+  prodPlugins
 };

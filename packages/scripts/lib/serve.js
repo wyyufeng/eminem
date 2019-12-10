@@ -14,13 +14,11 @@ const WebpackDevServer = require("webpack-dev-server");
 const fs = require("fs-extra");
 
 const chalk = require("chalk");
-const formatWebpackMessages = require("react-dev-utils/formatWebpackMessages");
 const util = require("./util");
 const {
   choosePort,
   prepareUrls
 } = require("react-dev-utils/WebpackDevServerUtils");
-const clearConsole = require("react-dev-utils/clearConsole");
 let project;
 try {
   project = fs.readJSONSync(util.resolveApp(".eminemrc"));
@@ -47,29 +45,29 @@ choosePort(host, port).then(port => {
   }
   const urls = prepareUrls("http", host, port);
   project.urls = urls;
-  //compose context
-  const ctxWrapper = Object.keys(base)
-    .map(k => base[k](project))
-    .reduceRight((a, b) => {
-      return ctx => a(b(ctx));
-    });
 
+  //compose context
+  const ctxMiddlewares = Object.keys(base).map(k => base[k](project));
+  const emCfgPath = util.resolveApp("em.config.js");
+  if (fs.existsSync(emCfgPath)) {
+    ctxMiddlewares.push(require(emCfgPath)(project));
+  }
+  const ctxWrappers = ctxMiddlewares.reduceRight((a, b) => {
+    return ctx => a(b(ctx));
+  });
   let compiler;
   let isFirstCompile = true;
   try {
     // console.log(JSON.stringify(ctxWrapper(context).toConfig(), null, 4));
-    compiler = webpack(ctxWrapper(context).toConfig());
+    compiler = webpack(ctxWrappers(context).toConfig());
   } catch (err) {
-    console.log(chalk.red("Failed to compile."));
-    console.log();
     console.log(err.message || err);
-    console.log();
     process.exit(1);
   }
-  compiler.hooks.invalid.tap("invalid", () => {
-    clearConsole();
-    console.log("Compiling...");
-  });
+  // compiler.hooks.invalid.tap("invalid", () => {
+  //   clearConsole();
+  //   console.log("Compiling...");
+  // });
   compiler.hooks.done.tap("done", async () => {
     if (isFirstCompile) {
       console.log("项目启动成功，访问如下地址即可访问页面：");
@@ -90,6 +88,6 @@ choosePort(host, port).then(port => {
       return console.log(err);
     }
 
-    console.log(chalk.greenBright("Starting the development server...\n"));
+    console.log(chalk.greenBright("正在启动开发服务器......\n"));
   });
 });

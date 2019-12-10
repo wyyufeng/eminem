@@ -29,6 +29,9 @@ module.exports = class WebpPlugin {
               .toBuffer()
               .then(data => {
                 const source = new RawSource(data);
+                if (source.size() >= asset.asset.size()) {
+                  return resolve();
+                }
                 fs.writeFileSync(cacheFilePath, data);
                 compilation.assets[`${asset.filename}_.webp`] = source;
                 resolve();

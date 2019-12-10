@@ -13,7 +13,6 @@ const path = require("path");
 const chalk = require("chalk");
 const gzipSize = require("gzip-size");
 const flatten = require("array-flatten").flatten;
-const logUpdate = require("log-update");
 const util = require("./util");
 const WARN_AFTER_BUNDLE_GZIP_SIZE = 200 * 1024; //kb
 let project;
@@ -39,14 +38,18 @@ build();
 
 function build() {
   let compiler;
-  const ctxWrapper = Object.keys(Object.assign(base, prod))
-    .map(k => base[k](project))
-    .reduceRight((a, b) => {
-      return ctx => a(b(ctx));
-    });
+  const ctxMap = Object.assign(base, prod);
+  const ctxMiddlewares = Object.keys(ctxMap).map(k => ctxMap[k](project));
+  const emCfgPath = util.resolveApp("em.config.js");
+  if (fs.existsSync(emCfgPath)) {
+    ctxMiddlewares.push(require(emCfgPath)(project));
+  }
+  const ctxWrappers = ctxMiddlewares.reduceRight((a, b) => {
+    return ctx => a(b(ctx));
+  });
 
   try {
-    compiler = webpack(ctxWrapper(context).toConfig());
+    compiler = webpack(ctxWrappers(context).toConfig());
   } catch (err) {
     console.log(err.message || err);
     process.exit(1);

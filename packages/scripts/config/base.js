@@ -1,5 +1,6 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const FriendlyErrorsWebpackPlugin = require("friendly-errors-webpack-plugin");
+const ManifestPlugin = require("webpack-manifest-plugin");
 
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const webpack = require("webpack");
@@ -261,7 +262,7 @@ function resolveConfig(options) {
   };
 }
 
-function pluginConfig() {
+function basePlugins() {
   return context => {
     context
       .plugin("IgnorePlugin")
@@ -280,7 +281,9 @@ function pluginConfig() {
       .end()
       .plugin("FriendlyErrorsWebpackPlugin")
       .use(FriendlyErrorsWebpackPlugin)
-      .end();
+      .end()
+      .plugin("ManifestPlugin")
+      .use(ManifestPlugin);
     return context;
   };
 }
@@ -326,6 +329,6 @@ module.exports = {
   imageLoader,
   fileLoader,
   resolveConfig,
-  pluginConfig,
+  basePlugins,
   eslintLoader
 };
