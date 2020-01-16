@@ -5,7 +5,6 @@ const chalk = require("chalk");
 const fse = require("fs-extra");
 const inquirer = require("inquirer");
 const ora = require("ora");
-const { exec } = require("child_process");
 const spawn = require("cross-spawn");
 
 const {
@@ -168,39 +167,34 @@ module.exports = class Create extends Task {
 
     const command = "npm";
     return new Promise((resolve, reject) => {
-      console.log("正在设置npm参数...");
-      spawn.sync(command, [
-        "config",
-        "set",
-        "sharp_dist_base_url",
-        "https://npm.taobao.org/mirrors/sharp-libvips/v8.8.1/",
-        "sass_binary_site",
-        "https://npm.taobao.org/mirrors/node-sass/",
-        { stdio: "inherit" }
-      ]);
-      const args = [
-        "install",
-        ...dependencies,
-        "--registry",
-        "https://registry.npm.taobao.org"
-      ];
-      const o = ora("正在安装依赖...").start();
-      const child = spawn.sync(command, args, { stdio: "inherit" });
-      child.on("close", code => {
-        if (code !== 0) {
+      try {
+        const args = [
+          "npm",
+          "install",
+          ...dependencies,
+          "--registry",
+          "https://registry.npm.taobao.org"
+        ];
+        const o = ora("正在安装依赖...").start();
+        const child = spawn.sync(command, [...args], {
+          stdio: "inherit"
+        });
+        if (child.status !== 0) {
           process.stdout.write("\n");
           console.log(`${command} ${args.join(" ")}`);
           process.stdout.write("\n");
           o.fail("嘤嘤嘤~ 依赖安装失败！");
-
-          reject(`${command} ${args.join(" ")}`);
+          reject(`\`${command} ${args.join(" ")}\` failed`);
           return;
+        } else {
+          process.stdout.write("\n");
+          o.succeed("依赖安装完成!");
+          process.stdout.write("\n");
+          resolve();
         }
-        process.stdout.write("\n");
-        o.succeed("依赖安装完成!");
-        process.stdout.write("\n");
-        resolve();
-      });
+      } catch (error) {
+        console.log(error);
+      }
     });
   }
 };

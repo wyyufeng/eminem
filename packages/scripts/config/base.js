@@ -84,7 +84,7 @@ function htmlPlugin(options) {
   };
 }
 
-function javascriptLoader() {
+function javascriptLoader(options) {
   return function(context) {
     context.module
       .rule("modules")
@@ -95,7 +95,8 @@ function javascriptLoader() {
       .options({
         cacheDirectory: true,
         cacheCompression: false,
-        presets: [require("@babel/preset-env"), require("@babel/preset-react")]
+        compact: options.isEnvProduction,
+        presets: [require.resolve("babel-preset-react-app")]
       });
 
     return context;
@@ -262,7 +263,7 @@ function resolveConfig(options) {
   };
 }
 
-function basePlugins() {
+function basePlugins(options) {
   return context => {
     context
       .plugin("IgnorePlugin")
@@ -283,7 +284,26 @@ function basePlugins() {
       .use(FriendlyErrorsWebpackPlugin)
       .end()
       .plugin("ManifestPlugin")
-      .use(ManifestPlugin);
+      .use(ManifestPlugin, [
+        {
+          fileName: "asset-manifest.json",
+          publicPath: options.appPublic,
+          generate: (seed, files, entrypoints) => {
+            const manifestFiles = files.reduce((manifest, file) => {
+              manifest[file.name] = file.path;
+              return manifest;
+            }, seed);
+            const entrypointFiles = entrypoints.main.filter(
+              fileName => !fileName.endsWith(".map")
+            );
+
+            return {
+              files: manifestFiles,
+              entrypoints: entrypointFiles
+            };
+          }
+        }
+      ]);
     return context;
   };
 }

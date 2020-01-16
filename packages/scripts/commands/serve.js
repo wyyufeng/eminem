@@ -34,6 +34,7 @@ function setup() {
   project.isEnvDevelopment = true;
   project.appDirectory = util.paths.appPath;
   project.appSrc = util.paths.appSrc;
+  project.appPublic = util.paths.appPublic;
 }
 const port = 3000;
 const host = "0.0.0.0";
