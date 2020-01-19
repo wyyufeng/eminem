@@ -73,7 +73,7 @@ class GenerateApp extends Task {
                 {
                     type: 'input',
                     name: 'description',
-                    message: '这个页面是用来干嘛的呢？'
+                    message: '增加一点描述信息吧'
                 },
                 {
                     type: 'confirm',
@@ -105,7 +105,6 @@ class GenerateApp extends Task {
         rcJson.app.push(app);
         this.writeConfig(rcJson);
         console.log(chalk.yellow(`正在写入模板...`));
-        fs.mkdirSync(this.getAppDir(answers.appName));
         createAppTemplateFile(answers.template, this.projectRoot, answers.appName);
         console.log(chalk.greenBright(`${answers.appName}创建成功！`));
     }
