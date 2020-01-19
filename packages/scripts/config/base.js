@@ -257,7 +257,9 @@ function eslintLoader(options) {
             .loader(require.resolve('eslint-loader'))
             .options({
                 formatter: require.resolve('react-dev-utils/eslintFormatter'),
-                eslintPath: require.resolve('eslint')
+                eslintPath: require.resolve('eslint'),
+                failOnWarning: options.isEnvProduction,
+                failOnError: options.isEnvProduction
             })
             .end();
         return context;
