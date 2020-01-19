@@ -38,7 +38,7 @@ function output(options) {
                 (config) =>
                     config
                         .path(undefined)
-                        .filename('js/bundle.js')
+                        .filename('js/[name].bundle.js')
                         .chunkFilename('js/[name].chunk.js')
             )
             .publicPath('')
@@ -77,7 +77,7 @@ function htmlPlugin(options) {
                       }
                     : undefined
             );
-            context.plugin(`htmlPlugin${page.page}`).use(HtmlWebpackPlugin, [{ ...hwpOptions }]);
+            context.plugin(`htmlPlugin${page.name}`).use(HtmlWebpackPlugin, [{ ...hwpOptions }]);
         });
         return context;
     };

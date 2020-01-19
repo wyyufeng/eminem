@@ -100,7 +100,7 @@ class GenerateApp extends Task {
             rem: answers.rem,
             description: answers.description,
             entry: `app/${answers.appName}/index.js`,
-            template: `app/${answers.appName}/index.html`
+            template: `${answers.appName}.html`
         };
         rcJson.app.push(app);
         this.writeConfig(rcJson);
