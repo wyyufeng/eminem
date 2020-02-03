@@ -23,7 +23,6 @@
     "commander": "^4.0.1",
     "cross-env": "^6.0.3",
     "cross-spawn": "^7.0.1",
-    "em-template": "^1.0.4",
     "file-loader": "^5.0.2",
     "fs-extra": "^8.1.0",
     "inquirer": "^7.0.0",

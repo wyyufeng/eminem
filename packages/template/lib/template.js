@@ -2,8 +2,7 @@ const fs = require('fs-extra');
 const path = require('path');
 function createAppTemplateFile(type = 'vanilla', projectDir, name) {
     const dest = path.resolve(projectDir, `./src/app/${name}/`);
-    console.log(dest);
-    console.log(fs.existsSync(dest));
+
     fs.mkdirSync(dest);
     const publicDir = path.resolve(projectDir, './public');
     fs.copyFileSync(
@@ -18,6 +17,7 @@ function createAppTemplateFile(type = 'vanilla', projectDir, name) {
 }
 
 function createProjectTemplate(projectDir) {
+    fs.mkdirSync(projectDir);
     fs.copySync(path.resolve(__dirname, './structure'), path.resolve(projectDir));
 }
 module.exports = { createAppTemplateFile, createProjectTemplate };
