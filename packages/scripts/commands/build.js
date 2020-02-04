@@ -3,6 +3,7 @@ process.env.NODE_ENV = 'production';
 process.on('unhandledRejection', (err) => {
     throw err;
 });
+require('../config/env');
 
 const { base, prod } = require('../config');
 const context = require('../config/context');

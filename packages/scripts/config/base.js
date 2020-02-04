@@ -291,7 +291,7 @@ function basePlugins(options) {
             .use(webpack.IgnorePlugin, [/^\.\/locale$/, /moment$/])
             .end()
             .plugin('DefinePlugin')
-            .use(webpack.DefinePlugin, [getClientEnvironment()])
+            .use(webpack.DefinePlugin, [getClientEnvironment().stringified])
             .end()
             .plugin('MiniCssExtractPlugin')
             .use(MiniCssExtractPlugin, [

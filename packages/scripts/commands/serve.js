@@ -5,7 +5,7 @@ process.env.NODE_ENV = 'development';
 process.on('unhandledRejection', (err) => {
     throw err;
 });
-
+require('../config/env');
 const { dev, base } = require('../config');
 const context = require('../config/context');
 const webpack = require('webpack');

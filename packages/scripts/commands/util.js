@@ -21,7 +21,7 @@ const util = {
             return 'build';
         },
         get dotEnv() {
-            return resolveApp('.');
+            return resolveApp('.env');
         }
     },
     version: {
