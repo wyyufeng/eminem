@@ -8,7 +8,6 @@ if (!NODE_ENV) {
     throw new Error('The NODE_ENV environment variable is required but was not specified.');
 }
 var dotenvFiles = [`${util.paths.dotEnv}.${NODE_ENV}`].filter(Boolean);
-console.log(dotenvFiles);
 dotenvFiles.forEach((dotenvFile) => {
     if (fs.existsSync(dotenvFile)) {
         require('dotenv-expand')(
@@ -32,7 +31,6 @@ function getClientEnvironment() {
         })
         .reduce(
             (env, key) => {
-                console.log(env);
                 env[key] = process.env[key];
                 return env;
             },
