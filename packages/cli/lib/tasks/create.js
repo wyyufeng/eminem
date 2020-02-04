@@ -111,7 +111,7 @@ module.exports = class Create extends Task {
         try {
             const { projectDir, name } = this.project;
             createProjectTemplate(projectDir);
-            createAppTemplateFile(this.template, projectDir, 'index');
+            await createAppTemplateFile(this.template, projectDir, 'index');
             const eminemrc = {
                 version: '0.0.0',
                 app: [
@@ -149,8 +149,7 @@ module.exports = class Create extends Task {
                         'cd ' + name
                     )}切换至项目目录，在项目目录下可以使用如下命令:`
                 );
-                console.log();
-                console.log(chalk.greenBright('npm run setup:安装依赖'));
+
                 console.log();
                 console.log(chalk.greenBright('npm start:启动开发服务器'));
                 console.log();

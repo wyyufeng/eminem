@@ -26,6 +26,7 @@ try {
 
 // 记录当前环境
 function setup() {
+    project.version = util.version.current();
     project.isEnvProduction = false;
     project.isEnvDevelopment = true;
     project.appDirectory = util.paths.appPath;

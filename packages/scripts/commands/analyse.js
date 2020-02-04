@@ -17,6 +17,7 @@ if (fs.existsSync(statsPath)) {
             console.log('嘤嘤嘤~分析失败了呀');
             console.log(err);
         }
+        console.log('生成结果...');
     });
 } else {
     console.log(`请先运行 ${chalk.blueBright('npm run build')}生成stats.json 文件，然后执行该命令`);

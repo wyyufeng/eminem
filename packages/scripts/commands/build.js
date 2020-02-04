@@ -26,6 +26,7 @@ try {
 
 function setup() {
     util.version.inc();
+    project.version = util.version.current();
     project.isEnvProduction = true;
     project.isEnvDevelopment = false;
     project.appDirectory = util.paths.appPath;

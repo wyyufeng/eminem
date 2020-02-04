@@ -125,18 +125,21 @@ function cssLoader(options) {
                     config
                         .use('style')
                         .loader(require.resolve('style-loader'))
+
                         .end();
                 }
             )
             .use('css')
             .loader(require.resolve('css-loader'))
             .options({
-                importLoaders: 1
+                importLoaders: 1,
+                sourceMap: true
             })
             .end()
             .use('postcss')
             .loader(require.resolve('postcss-loader'))
             .options({
+                sourceMap: true,
                 ident: 'postcss',
                 plugins: () => [
                     require('postcss-flexbugs-fixes'),
@@ -176,12 +179,14 @@ function sassLoader(options) {
             .use('css')
             .loader(require.resolve('css-loader'))
             .options({
-                importLoaders: 1
+                importLoaders: 1,
+                sourceMap: true
             })
             .end()
             .use('postcss')
             .loader(require.resolve('postcss-loader'))
             .options({
+                sourceMap: true,
                 ident: 'postcss',
                 plugins: () => [
                     require('postcss-flexbugs-fixes'),
@@ -197,10 +202,13 @@ function sassLoader(options) {
             .end()
             .use('resolve-url')
             .loader(require.resolve('resolve-url-loader'))
+            .options({
+                sourceMap: true
+            })
             .end()
             .use('scss')
             .loader(require.resolve('sass-loader'))
-            .options({})
+            .options({ sourceMap: true })
             .end();
         return context;
     };
@@ -299,17 +307,21 @@ function basePlugins(options) {
             .plugin('ManifestPlugin')
             .use(ManifestPlugin, [
                 {
-                    fileName: 'manifest.json',
+                    fileName: `manifest~v${options.version}.json`,
                     publicPath: options.appPublic,
+                    seed: { files: {}, sourceMaps: {} },
                     generate: (seed, files) => {
                         const manifestFiles = files.reduce((manifest, file) => {
-                            manifest[file.name] = file.path;
+                            const ext = path.extname(file.name);
+                            if (ext === '.map') {
+                                manifest['sourceMaps'][file.name] = file.path;
+                                return manifest;
+                            }
+                            manifest['files'][file.name] = file.path;
                             return manifest;
                         }, seed);
 
-                        return {
-                            files: manifestFiles
-                        };
+                        return manifestFiles;
                     }
                 }
             ]);
