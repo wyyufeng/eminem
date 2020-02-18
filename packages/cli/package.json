@@ -5,29 +5,25 @@
   "author": "wyyufeng <wyyufeng@gmail.com>",
   "homepage": "",
   "license": "MIT",
-  "main": "lib/em.js",
+  "main": "eminem.js",
   "bin": {
-    "em": "lib/em.js"
-  },
-  "directories": {
-    "lib": "lib"
+    "em": "eminem.js"
   },
   "publishConfig": {
     "access": "public"
   },
   "files": [
-    "lib"
+    "tasks",
+    "eminem.js"
   ],
   "dependencies": {
     "chalk": "^3.0.0",
     "commander": "^4.0.1",
     "cross-env": "^6.0.3",
     "cross-spawn": "^7.0.1",
-    "file-loader": "^5.0.2",
     "fs-extra": "^8.1.0",
     "inquirer": "^7.0.0",
-    "ora": "^4.0.3",
-    "url-loader": "^3.0.0",
+    "log-symbols": "^3.0.0",
     "validate-npm-package-name": "^3.0.0"
   },
   "gitHead": "265738778d5e0cbe56ac5784fd8591b31ed93654"
