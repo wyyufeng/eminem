@@ -1,0 +1,9 @@
+{
+    "package": {},
+    "dev": {
+        "meta": {
+            "entry": "index.js",
+            "html": "index.html"
+        }
+    }
+}

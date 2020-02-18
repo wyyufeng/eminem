@@ -1,7 +1,7 @@
-const fs = require("fs-extra");
-const path = require("path");
-process.on("unhandledRejection", err => {
-  throw err;
+const fs = require('fs-extra');
+const path = require('path');
+process.on('unhandledRejection', (err) => {
+    throw err;
 });
 
 /**
@@ -10,66 +10,65 @@ process.on("unhandledRejection", err => {
  * @class Task
  */
 class Task {
-  constructor() {
-    this._projectRoot = process.cwd();
-    this._config = {
-      name: "",
-      version: "0.0.0",
-      app: []
-    };
-  }
-  /**
-   *
-   * @returns em的工作目录
-   * @readonly
-   * @memberof Task
-   */
-  get projectRoot() {
-    if (fs.existsSync(path.resolve(this._projectRoot, ".eminemrc"))) {
-      return this._projectRoot;
+    constructor() {
+        this._projectRoot = process.cwd();
     }
-    throw Error("嘤嘤嘤~~当前不是eminem的工作目录！");
-  }
-  /**
-   * 相对em工作目录的文件目录
-   * @param {String} dest - 目录
-   * @returns {String} 地址
-   * @memberof Task
-   */
-  getDir(dest) {
-    return path.resolve(this.projectRoot, dest);
-  }
-  /**
-   * app目录
-   * @param {String} appName - app名称
-   * @returns {String} 地址
-   * @memberof Task
-   */
-  getAppDir(appName) {
-    return this.getDir(`src/app/${appName}`);
-  }
-  /**
-   * 读取配置文件内容
-   *
-   * @returns {Object} - 配置文件对象
-   * @memberof Task
-   */
-  getConfig() {
-    return fs.readJSONSync(this.getDir(".eminemrc"));
-  }
-  /**
-   * 写入配置文件
-   *
-   * @param {Object} data - 待写入的对象
-   * @returns
-   * @memberof Task
-   */
-  writeConfig(data) {
-    return fs.writeJSONSync(this.getDir(".eminemrc"), data, {
-      spaces: 4,
-      replacer: null
-    });
-  }
+    /**
+     *
+     * @returns em的工作目录
+     * @readonly
+     * @memberof Task
+     */
+    get projectRoot() {
+        if (fs.existsSync(path.resolve(this._projectRoot, '.eminemrc'))) {
+            return this._projectRoot;
+        }
+        throw Error('嘤嘤嘤~~当前不是eminem的工作目录！');
+    }
+    /**
+     * 相对em工作目录的文件目录
+     * @param {String} dest - 目录
+     * @returns {String} 地址
+     * @memberof Task
+     */
+    getDir(dest) {
+        return path.resolve(this.projectRoot, dest);
+    }
+    /**
+     * app目录
+     * @param {String} appName - app名称
+     * @returns {String} 地址
+     * @memberof Task
+     */
+    getAppDir(appName) {
+        return this.getDir(`src/app/${appName}`);
+    }
+    /**
+     * 读取配置文件内容
+     *
+     * @returns {Object} - 配置文件对象
+     * @memberof Task
+     */
+    getConfig() {
+        return fs.readJSONSync(this.getDir('.eminemrc'));
+    }
+    /**
+     * 写入配置文件
+     *
+     * @param {Object} data - 待写入的对象
+     * @returns
+     * @memberof Task
+     */
+    writeConfig(data) {
+        return fs.writeJSONSync(this.getDir('.eminemrc'), data, {
+            spaces: 4,
+            replacer: null
+        });
+    }
+    patchConfig(data) {
+        const config = this.getConfig();
+        this.writeConfig(Object.assign(config, data));
+    }
 }
 
 module.exports = Task;

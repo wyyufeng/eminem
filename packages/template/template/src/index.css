@@ -6,6 +6,7 @@ body {
     background-color: #000;
     color: #eee;
     font-size: 24px;
+    background: url('./assets/image.jpg') no-repeat center center/cover;
 }
 .container {
     height: 100vh;
