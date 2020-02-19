@@ -6,18 +6,12 @@
   "homepage": "",
   "license": "MIT",
   "main": "lib/template.js",
-  "directories": {
-    "lib": "lib"
-  },
   "files": [
-    "lib"
+    "template",
+    "template.json"
   ],
   "publishConfig": {
     "access": "public"
-  },
-  "dependencies": {
-    "fs-extra": "^8.1.0",
-    "node-fetch": "^2.6.0"
   },
   "gitHead": "265738778d5e0cbe56ac5784fd8591b31ed93654"
 }
