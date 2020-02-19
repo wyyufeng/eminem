@@ -26,14 +26,19 @@ class InitTask extends Task {
         );
         this.packageJson = {
             name: name,
-            version: '0.0.0'
+            version: '0.0.0',
+            scripts: {
+                start: 'em-scripts serve',
+                build: 'em-scripts build',
+                analyse: 'em-scripts analyse'
+            }
         };
     }
 
     async createApp() {
         info(`正在 ${chalk.cyan(this.projectDir)}下新建项目...`);
         const emrc = {
-            name: '',
+            name: this.appName,
             version: '0.0.0',
             app: []
         };
@@ -85,13 +90,16 @@ class InitTask extends Task {
         const templateDeps = templateJsonPackage.dependencies || {};
         const templateMeta = templateJsonDev.meta;
         const templateDepsName = Object.keys(templateDeps);
-        const config = this.getConfig();
+        const config = fs.readJSONSync(path.resolve(this.projectDir, './.eminemrc'));
         if (Array.isArray(templateMeta)) {
             config.app.push(...templateMeta);
         } else {
             config.app.push(templateMeta);
         }
-        this.writeConfig(config);
+        fs.writeJSONSync(path.resolve(this.projectDir, './.eminemrc'), config, {
+            spaces: 4,
+            replacer: null
+        });
         info('正在安装模板依赖...');
         installPkg(templateDepsName)
             .then(() => {

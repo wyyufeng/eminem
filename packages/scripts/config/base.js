@@ -17,7 +17,7 @@ function entry(options) {
                 .when(options.isEnvDevelopment, (config) =>
                     config.add(require.resolve('react-dev-utils/webpackHotDevClient'))
                 )
-                .add(path.resolve(options.appDirectory, `./src/app/${entry.name}/index.js`))
+                .add(path.resolve(options.appDirectory, `./src/app/${entry.entry}`))
                 .end();
         });
         return context;
@@ -55,7 +55,7 @@ function htmlPlugin(options) {
                 {},
                 {
                     inject: true,
-                    filename: `${page.name}.html`,
+                    filename: `${page.name || 'index'}.html`,
                     chunks: [page.name],
                     template: path.resolve(process.cwd(), `./public/${page.template}`)
                 },
