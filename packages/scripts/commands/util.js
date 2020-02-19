@@ -26,11 +26,11 @@ const util = {
     },
     version: {
         current() {
-            const emrc = fs.readJSONSync(resolveApp('.eminemrc'));
+            const emrc = fs.readJSONSync(resolveApp('eminem.json'));
             return emrc.version;
         },
         inc() {
-            const emrc = fs.readJSONSync(resolveApp('.eminemrc'));
+            const emrc = fs.readJSONSync(resolveApp('eminem.json'));
             // 第一次打包
             if (!semver.eq(emrc.version, '0.0.0')) {
                 const _buildPath = resolveApp(util.paths.appBuildFileName);
@@ -40,7 +40,7 @@ const util = {
             }
             const nextVersion = semver.inc(emrc.version, 'major');
             emrc.version = nextVersion;
-            fs.writeJSONSync(resolveApp('.eminemrc'), emrc, {
+            fs.writeJSONSync(resolveApp('eminem.json'), emrc, {
                 replacer: null,
                 spaces: 4
             });

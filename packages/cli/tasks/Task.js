@@ -20,7 +20,7 @@ class Task {
      * @memberof Task
      */
     get projectRoot() {
-        if (fs.existsSync(path.resolve(this._projectRoot, '.eminemrc'))) {
+        if (fs.existsSync(path.resolve(this._projectRoot, 'eminem.json'))) {
             return this._projectRoot;
         }
         throw Error('嘤嘤嘤~~当前不是eminem的工作目录！');
@@ -50,7 +50,7 @@ class Task {
      * @memberof Task
      */
     getConfig() {
-        return fs.readJSONSync(this.getDir('.eminemrc'));
+        return fs.readJSONSync(this.getDir('eminem.json'));
     }
     /**
      * 写入配置文件
@@ -60,7 +60,7 @@ class Task {
      * @memberof Task
      */
     writeConfig(data) {
-        return fs.writeJSONSync(this.getDir('.eminemrc'), data, {
+        return fs.writeJSONSync(this.getDir('eminem.json'), data, {
             spaces: 4,
             replacer: null
         });

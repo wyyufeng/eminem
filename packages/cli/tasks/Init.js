@@ -4,7 +4,7 @@ const path = require('path');
 const chalk = require('chalk');
 const { info, success, error, installPkg } = require('./util');
 class InitTask extends Task {
-    constructor(name, template, useYarn, usecnpm) {
+    constructor(name, template = 'em-template', useYarn, usecnpm) {
         super();
         this.template = template;
         this.appName = name;
@@ -46,7 +46,7 @@ class InitTask extends Task {
             spaces: 4,
             replacer: null
         });
-        fs.writeJSONSync(path.resolve(this.projectDir, '.eminemrc'), emrc, {
+        fs.writeJSONSync(path.resolve(this.projectDir, 'eminem.json'), emrc, {
             spaces: 4,
             replacer: null
         });
@@ -90,13 +90,13 @@ class InitTask extends Task {
         const templateDeps = templateJsonPackage.dependencies || {};
         const templateMeta = templateJsonDev.meta;
         const templateDepsName = Object.keys(templateDeps);
-        const config = fs.readJSONSync(path.resolve(this.projectDir, './.eminemrc'));
+        const config = fs.readJSONSync(path.resolve(this.projectDir, './eminem.json'));
         if (Array.isArray(templateMeta)) {
             config.app.push(...templateMeta);
         } else {
             config.app.push(templateMeta);
         }
-        fs.writeJSONSync(path.resolve(this.projectDir, './.eminemrc'), config, {
+        fs.writeJSONSync(path.resolve(this.projectDir, './eminem.json'), config, {
             spaces: 4,
             replacer: null
         });

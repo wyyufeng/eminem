@@ -1,7 +1,12 @@
 {
-    "package": {},
+    "package": {
+        "dependencies": {
+            "eslint-config-alloy": "^3.5.0"
+        }
+    },
     "dev": {
         "meta": {
+            "name": "index",
             "entry": "index.js",
             "html": "index.html"
         }

@@ -57,7 +57,7 @@ function htmlPlugin(options) {
                     inject: true,
                     filename: `${page.name || 'index'}.html`,
                     chunks: [page.name],
-                    template: path.resolve(process.cwd(), `./public/${page.template}`)
+                    template: path.resolve(process.cwd(), `./public/${page.html}`)
                 },
 
                 options.isEnvProduction

@@ -18,7 +18,7 @@ const util = require('./util');
 const WARN_AFTER_BUNDLE_GZIP_SIZE = 200 * 1024; //kb
 let project;
 try {
-    project = fs.readJSONSync(util.resolveApp('.eminemrc'));
+    project = fs.readJSONSync(util.resolveApp('eminem.json'));
 } catch (error) {
     console.log();
     console.error('嘤嘤嘤~~当前不是eminem的工作目录！');
