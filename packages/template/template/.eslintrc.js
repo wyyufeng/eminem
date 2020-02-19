@@ -1,6 +1,5 @@
 module.exports = {
-    extends: ['alloy', 'alloy/react'],
-    plugins: ['react-hooks'],
+    extends: ['alloy'],
     rules: {
         'no-invalid-this': 'off'
     }
