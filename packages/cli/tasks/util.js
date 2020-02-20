@@ -13,7 +13,8 @@ function error(msg) {
 function warn(msg) {
     console.log(logSymbols.warning, msg);
 }
-function installPkg(deps = [], command = 'npm', registry = 'https://registry.npm.taobao.org') {
+function installPkg(deps = [], useYarn = false, usecnpm = false) {
+    const command = useYarn ? 'yarn' : 'npm';
     return new Promise((resolve, reject) => {
         const args = [];
         if (command === 'npm') {
@@ -23,8 +24,8 @@ function installPkg(deps = [], command = 'npm', registry = 'https://registry.npm
             args.push('add');
         }
         args.push(...deps);
-        args.push('--registry', registry);
-        spawn('npm', [...args], {
+        usecnpm && args.push('--registry', 'https://registry.npm.taobao.org');
+        spawn(command, [...args], {
             stdio: 'inherit'
         }).on('close', (code) => {
             if (code !== 0) {

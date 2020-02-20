@@ -69,7 +69,7 @@ class InitTask extends Task {
         process.chdir(this.projectDir);
 
         return new Promise((resolve, reject) => {
-            installPkg(this.dependencies)
+            installPkg(this.dependencies, this.useYarn, this.usecnpm)
                 .then(() => {
                     success('依赖安装完成！');
                     resolve();
@@ -109,7 +109,7 @@ class InitTask extends Task {
                 replacer: null
             });
             info('正在安装模板依赖...');
-            installPkg(templateDepsName)
+            installPkg(templateDepsName, this.useYarn, this.usecnpm)
                 .then(() => {
                     success('模板依赖安装完成');
                     resolve();

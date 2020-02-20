@@ -26,9 +26,9 @@ program
         const isCurrentDir = name === '.';
         const result = validateName(name, isCurrentDir);
         projectName = result;
-
+        const { template, useYarn, usecnpm } = options;
         checkProjectDir(isCurrentDir, projectDir).then(() => {
-            new InitTask(projectName, options.template, options.useYarn).createApp();
+            new InitTask(projectName, template, useYarn, usecnpm).createApp();
         });
     });
 
