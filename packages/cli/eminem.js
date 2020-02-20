@@ -22,7 +22,7 @@ program
     .option('--useYarn', '是否使用yarn作为包管理器')
     .option('--usecnpm', '使用淘宝源')
     .action((name, options) => {
-        const projectDir = path.resolve(process.cwd(), projectName);
+        const projectDir = path.resolve(process.cwd(), name);
         const isCurrentDir = name === '.';
         const result = validateName(name, isCurrentDir);
         projectName = result;
