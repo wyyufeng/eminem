@@ -7,7 +7,7 @@ const chalk = require('chalk');
 const fs = require('fs-extra');
 const inquirer = require('inquirer');
 const InitTask = require('./tasks/Init');
-const { info, error, warn } = require('./tasks/util');
+const { info, error } = require('./tasks/util');
 process.on('unhandledRejection', (err) => {
     throw err;
 });
@@ -22,12 +22,13 @@ program
     .option('--useYarn', '是否使用yarn作为包管理器')
     .option('--usecnpm', '使用淘宝源')
     .action((name, options) => {
-        projectName = name;
         const projectDir = path.resolve(process.cwd(), projectName);
-        const isCurrentDir = projectName === '.';
-        validateName(name, isCurrentDir);
+        const isCurrentDir = name === '.';
+        const result = validateName(name, isCurrentDir);
+        projectName = result;
+
         checkProjectDir(isCurrentDir, projectDir).then(() => {
-            new InitTask(name, options.template, options.useYarn).createApp();
+            new InitTask(projectName, options.template, options.useYarn).createApp();
         });
     });
 
@@ -42,6 +43,7 @@ function validateName(projectName, isCurrentDir) {
             process.exit(1);
         });
     }
+    return name;
 }
 
 async function checkProjectDir(isCurrentDir, projectDir) {
@@ -54,7 +56,10 @@ async function checkProjectDir(isCurrentDir, projectDir) {
                     message: `是否在当前目录下创建项目?`
                 }
             ]);
-            if (!ok) return process.exit(1);
+            if (!ok) {
+                info('告辞！');
+                return process.exit(1);
+            }
         } else {
             const { ok } = await inquirer.prompt([
                 {
@@ -64,7 +69,7 @@ async function checkProjectDir(isCurrentDir, projectDir) {
                 }
             ]);
             if (!ok) {
-                warn('退出拉倒!');
+                info('告辞!');
                 return process.exit(1);
             }
             if (ok) {

@@ -53,7 +53,14 @@ class InitTask extends Task {
 
         this.install().then(() => {
             this.copyTemplate();
-            this.getTemplateInfo();
+            this.getTemplateInfo()
+                .then(() => {
+                    info('项目创建完成!');
+                    console.log(`使用 ${chalk.cyan('cd ' + this.appName)}`);
+                })
+                .catch(() => {
+                    error('嘤嘤嘤,项目创建失败了!');
+                });
         });
     }
     install() {
@@ -84,30 +91,34 @@ class InitTask extends Task {
     }
 
     getTemplateInfo() {
-        const templateJson = fs.readJSONSync(this.templateJsonPath);
-        const templateJsonPackage = templateJson.package || {};
-        const templateJsonDev = templateJson.dev || {};
-        const templateDeps = templateJsonPackage.dependencies || {};
-        const templateMeta = templateJsonDev.meta;
-        const templateDepsName = Object.keys(templateDeps);
-        const config = fs.readJSONSync(path.resolve(this.projectDir, './eminem.json'));
-        if (Array.isArray(templateMeta)) {
-            config.app.push(...templateMeta);
-        } else {
-            config.app.push(templateMeta);
-        }
-        fs.writeJSONSync(path.resolve(this.projectDir, './eminem.json'), config, {
-            spaces: 4,
-            replacer: null
-        });
-        info('正在安装模板依赖...');
-        installPkg(templateDepsName)
-            .then(() => {
-                success('模板依赖安装完成');
-            })
-            .catch(() => {
-                error('模板依赖安装失败');
+        return new Promise((resolve, reject) => {
+            const templateJson = fs.readJSONSync(this.templateJsonPath);
+            const templateJsonPackage = templateJson.package || {};
+            const templateJsonDev = templateJson.dev || {};
+            const templateDeps = templateJsonPackage.dependencies || {};
+            const templateMeta = templateJsonDev.meta;
+            const templateDepsName = Object.keys(templateDeps);
+            const config = fs.readJSONSync(path.resolve(this.projectDir, './eminem.json'));
+            if (Array.isArray(templateMeta)) {
+                config.app.push(...templateMeta);
+            } else {
+                config.app.push(templateMeta);
+            }
+            fs.writeJSONSync(path.resolve(this.projectDir, './eminem.json'), config, {
+                spaces: 4,
+                replacer: null
             });
+            info('正在安装模板依赖...');
+            installPkg(templateDepsName)
+                .then(() => {
+                    success('模板依赖安装完成');
+                    resolve();
+                })
+                .catch(() => {
+                    error('模板依赖安装失败');
+                    reject();
+                });
+        });
     }
 }
 

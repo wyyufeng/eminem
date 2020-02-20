@@ -5,7 +5,6 @@
   "author": "wyyufeng <wyyufeng@gmail.com>",
   "homepage": "",
   "license": "MIT",
-  "main": "lib/template.js",
   "files": [
     "template",
     "template.json"
