@@ -56,7 +56,7 @@ choosePort(host, port).then((port) => {
     let compiler;
     let isFirstCompile = true;
     try {
-        // console.log(JSON.stringify(ctxWrapper(context).toConfig(), null, 4));
+        // console.log(JSON.stringify(ctxWrappers(context).toConfig(), null, 4));
         compiler = webpack(ctxWrappers(context).toConfig());
     } catch (err) {
         console.log(err.message || err);
@@ -67,13 +67,12 @@ choosePort(host, port).then((port) => {
         console.log(err);
     });
     compiler.hooks.done.tap('done', async (stats) => {
-        const isSuccessful = stats.hasErrors();
-
+        const isSuccessful = !stats.hasErrors();
         if (isFirstCompile && isSuccessful) {
             console.log('项目启动成功，可通过如下地址访问：');
             console.log();
-            console.log(chalk.blueBright(`局域网 :-    ${urls.lanUrlForTerminal}`));
-            console.log(chalk.blueBright(`本  机 :-    ${urls.localUrlForBrowser}`));
+            console.log(chalk.blueBright(`局域网 :  - ${urls.lanUrlForTerminal}`));
+            console.log(chalk.blueBright(`本  机 :  - ${urls.localUrlForBrowser}`));
             isFirstCompile = false;
         }
     });

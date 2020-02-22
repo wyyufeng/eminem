@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 function App() {
     const [placeholder, setplaceholder] = useState({
         author: '',
@@ -6,11 +6,20 @@ function App() {
         name: ''
     });
 
-    useEffect(async () => {
-        const res = await fetch('https://open.saintic.com/api/sentence/');
-        const json = await res.json();
-        const { author, sentence, name } = json.data;
+    useEffect(() => {
+        const fetchData = async () => {
+            const res = await fetch('https://open.saintic.com/api/sentence/');
+            const json = await res.json();
+            const { author, sentence, name } = json.data;
+            setplaceholder({
+                author,
+                sentence,
+                name
+            });
+        };
+        fetchData();
     }, []);
+    const { sentence, author, name } = placeholder;
     return (
         <div className="container">
             <p>{sentence}</p>

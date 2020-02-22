@@ -43,7 +43,7 @@ function optimization(options) {
                 chunks: 'all',
                 name: false
             })
-            .runtimeChunk(true);
+            .runtimeChunk({ name: (entrypoint) => `runtime-${entrypoint.name}` });
         return context;
     };
 }

@@ -15,7 +15,7 @@ const chalk = require('chalk');
 const gzipSize = require('gzip-size');
 const flatten = require('array-flatten').flatten;
 const util = require('./util');
-const WARN_AFTER_BUNDLE_GZIP_SIZE = 200 * 1024; //kb
+const WARN_AFTER_BUNDLE_GZIP_SIZE = 250 * 1024; //kb
 let project;
 try {
     project = fs.readJSONSync(util.resolveApp('eminem.json'));
@@ -59,18 +59,23 @@ function build() {
     const buildDir = util.paths.appBuild;
 
     fs.emptyDirSync(buildDir);
-    console.log('正在构建生产环境包...');
-
+    console.log('正在构建...');
+    copyPublicFolder();
     compiler.run((err, stats) => {
         if (err) {
             console.log(`嘤嘤嘤~ 构建失败！`);
             console.log(err.message);
             process.exit(1);
         }
-
+        if (stats.hasErrors()) {
+            return console.log(`${chalk.yellowBright('哪里出了点问题呀~~')}`);
+        }
         printFileSize(buildDir);
         console.log('构建完成！');
         fs.writeJSON('./stats.json', stats.toJson());
+        console.log(
+            `您可以通过命令 ${chalk.blueBright('npx serve build')} 启动静态服务查看构建结果！`
+        );
     });
 }
 
@@ -78,7 +83,9 @@ function printFileSize(dir) {
     const fileSizes = measureFileSize(dir);
     const result = flatten(fileSizes);
     const msg = result.reduce((a, b) => {
-        const str = chalk.greenBright(`${filesize(b.size)}  ${b.file} \n`);
+        let size = filesize(b.size);
+        size = size.length < 20 ? size + ' '.repeat(20 - size.length) : size;
+        const str = chalk.greenBright(`${size} ${b.file} \n`);
         a = a + str;
         return a;
     }, '');
@@ -89,18 +96,17 @@ function printFileSize(dir) {
     console.log();
     const warnChunks = result.filter((file) => file.size > WARN_AFTER_BUNDLE_GZIP_SIZE);
     if (warnChunks.length > 0) {
-        console.log(chalk.yellowBright('当前构建文件过大(200kb),可能会影响网站加载速度：'));
-        warnChunks.forEach((i) => {
-            console.log(`${chalk.yellowBright(i.file)} \n`);
-        });
-        console.log('建议采取以下措施减少文件大小：');
-        console.log('1.将过大的bundle拆分为更小的chunk，并使用懒加载');
-        console.log('2.压缩图片');
         console.log(
-            `3.通过使用${chalk.blue(
-                'npm run analyse'
-            )} 查看过大的第三方library，并尝试使用数量更少/体积更小的 library`
+            chalk.yellowBright(
+                `以下资源过大(>${filesize(WARN_AFTER_BUNDLE_GZIP_SIZE)}),可能会影响网站性能：`
+            )
         );
+        console.log();
+        warnChunks.forEach((i) => {
+            console.log(`${chalk.yellowBright(i.file)}(${chalk.redBright(filesize(i.size))}) \n`);
+        });
+        console.log(`${chalk.yellowBright('建议对其优化！')} \n`);
+        console.log('\n');
     }
 }
 function measureFileSize(file) {
@@ -123,6 +129,15 @@ function measureFileSize(file) {
             size: gzipSize.fileSync(file)
         };
     }
+}
+
+function copyPublicFolder() {
+    const appsAbsolutePath = util.paths.appsAbsolutePath;
+    const htmlPaths = Object.keys(appsAbsolutePath).map((key) => appsAbsolutePath[key].html);
+    fs.copySync(util.paths.appPublic, util.paths.appBuild, {
+        dereference: true,
+        filter: (file) => !htmlPaths.includes(file)
+    });
 }
 
 module.exports = build;

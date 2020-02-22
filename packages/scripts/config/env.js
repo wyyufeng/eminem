@@ -24,7 +24,7 @@ process.env.NODE_PATH = (process.env.NODE_PATH || '')
     .map((folder) => path.resolve(appDirectory, folder))
     .join(path.delimiter);
 
-function getClientEnvironment() {
+function getClientEnvironment(publicUrl) {
     const raw = Object.keys(process.env)
         .filter((env) => {
             return env.includes('EM');
@@ -35,7 +35,8 @@ function getClientEnvironment() {
                 return env;
             },
             {
-                NODE_ENV: process.env.NODE_ENV || 'development'
+                NODE_ENV: process.env.NODE_ENV || 'development',
+                PUBLIC_URL: publicUrl
             }
         );
     const stringified = {

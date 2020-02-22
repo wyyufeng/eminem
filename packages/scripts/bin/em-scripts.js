@@ -8,6 +8,7 @@ const scriptIndex = args.findIndex((x) => x === 'build' || x === 'serve');
 const script = scriptIndex === -1 ? args[0] : args[scriptIndex];
 const path = require('path');
 if (['serve', 'build', 'analyse'].includes(script)) {
+    console.log('dev-mode');
     const result = spawn.sync('node ', [path.resolve(__dirname, `../commands/${script}.js`)], {
         stdio: 'inherit'
     });

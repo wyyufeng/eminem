@@ -5,6 +5,13 @@ const util = require('../commands/util');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const webpack = require('webpack');
 const path = require('path');
+const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
+const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin');
+const InlineChunkHtmlPlugin = require('react-dev-utils/InlineChunkHtmlPlugin');
+const InlineScriptHtmlPlugin = require('../plugins/InlineScriptHtmlPlugin');
+const EnvScriptHtmlPlugin = require('../plugins/EnvScriptHtmlPlugin');
+const CopyPlugin = require('copy-webpack-plugin');
+
 const getClientEnvironment = require('./env');
 
 // 入口配置
@@ -41,7 +48,7 @@ function output(options) {
                         .filename('js/[name].bundle.js')
                         .chunkFilename('js/[name].chunk.js')
             )
-            .publicPath('')
+            .publicPath('/')
             .end();
         return context;
     };
@@ -82,13 +89,33 @@ function htmlPlugin(options) {
         return context;
     };
 }
-
+// 配置 eslint
+function eslintLoader(options) {
+    return (context) => {
+        context.module
+            .rule('eslint')
+            .test(/\.(js|mjs|jsx|ts|tsx)$/)
+            .include.add(options.appSrc)
+            .end()
+            .enforce('pre')
+            .use('eslint-loader')
+            .loader(require.resolve('eslint-loader'))
+            .options({
+                formatter: require.resolve('react-dev-utils/eslintFormatter'),
+                eslintPath: require.resolve('eslint'),
+                failOnWarning: options.isEnvProduction,
+                failOnError: options.isEnvProduction
+            })
+            .end();
+        return context;
+    };
+}
 // 配置 js 文件处理
 function javascriptLoader(options) {
     return function(context) {
         context.module
-            .rule('modules')
-            .oneOf('javascript')
+
+            .rule('javascript')
             .test(/\.(js|mjs|jsx|ts|tsx)$/)
             .include.add(util.paths.appSrc)
             .end()
@@ -109,10 +136,8 @@ function javascriptLoader(options) {
 function cssLoader(options) {
     return function(context) {
         context.module
-            .rule('modules')
-            .oneOf('css')
+            .rule('css')
             .test(/\.css$/)
-
             .when(
                 options.isEnvProduction,
                 (config) => {
@@ -150,7 +175,6 @@ function cssLoader(options) {
                         stage: 3
                     }),
                     require('postcss-normalize')
-                    // require("../plugins/PostcssPlugin")
                 ]
             })
 
@@ -163,10 +187,8 @@ function cssLoader(options) {
 function sassLoader(options) {
     return (context) => {
         context.module
-            .rule('modules')
-            .oneOf('sass')
+            .rule('sass')
             .test(/\.scss$/)
-
             .when(
                 options.isEnvProduction,
                 (config) => {
@@ -218,10 +240,8 @@ function sassLoader(options) {
 function imageLoader() {
     return (context) => {
         context.module
-            .rule('modules')
-            .oneOf('image')
-
-            .test([/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/])
+            .rule('image')
+            .test(/\.(ico|png|jpg|jpeg|gif|svg|webp)(\?v=\d+\.\d+\.\d+)?$/)
             .use('url-loader')
             .loader(require.resolve('url-loader'))
             .options({
@@ -238,36 +258,20 @@ function imageLoader() {
 function fileLoader() {
     return (context) => {
         context.module
-            .rule('modules')
-            .oneOf('file')
-            .exclude.add([/\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/])
+            .rule('file')
+            .exclude.add([
+                /\.(js|mjs|jsx|ts|tsx)$/,
+                /\.html$/,
+                /\.json$/,
+                /\.scss$/,
+                /\.css$/,
+                /\.(ico|png|jpg|jpeg|gif|svg|webp)(\?v=\d+\.\d+\.\d+)?$/
+            ])
             .end()
             .use('file-loader')
             .loader(require.resolve('file-loader'))
             .options({
-                name: 'static/[name].[hash:8].[ext]'
-            })
-            .end();
-        return context;
-    };
-}
-// 配置 eslint
-function eslintLoader(options) {
-    return (context) => {
-        context.module
-            .rule('eslint')
-            .test(/\.(js|mjs|jsx|ts|tsx)$/)
-            .include.add(options.appSrc)
-            .end()
-            .enforce('pre')
-            .use('eslint-loader')
-
-            .loader(require.resolve('eslint-loader'))
-            .options({
-                formatter: require.resolve('react-dev-utils/eslintFormatter'),
-                eslintPath: require.resolve('eslint'),
-                failOnWarning: options.isEnvProduction,
-                failOnError: options.isEnvProduction
+                name: 'static/[name].[ext]'
             })
             .end();
         return context;
@@ -291,7 +295,7 @@ function basePlugins(options) {
             .use(webpack.IgnorePlugin, [/^\.\/locale$/, /moment$/])
             .end()
             .plugin('DefinePlugin')
-            .use(webpack.DefinePlugin, [getClientEnvironment().stringified])
+            .use(webpack.DefinePlugin, [getClientEnvironment('').stringified])
             .end()
             .plugin('MiniCssExtractPlugin')
             .use(MiniCssExtractPlugin, [
@@ -307,7 +311,7 @@ function basePlugins(options) {
             .plugin('ManifestPlugin')
             .use(ManifestPlugin, [
                 {
-                    fileName: `manifest~v${options.version}.json`,
+                    fileName: `asset-manifest~v${options.version}.json`,
                     publicPath: options.appPublic,
                     seed: { files: {}, sourceMaps: {} },
                     generate: (seed, files) => {
@@ -324,7 +328,25 @@ function basePlugins(options) {
                         return manifestFiles;
                     }
                 }
-            ]);
+            ])
+            .end()
+            .plugin('InterpolateHtmlPlugin')
+            .use(InterpolateHtmlPlugin, [HtmlWebpackPlugin, getClientEnvironment('').raw])
+            .end()
+            .plugin('WatchMissingNodeModulesPlugin')
+            .use(WatchMissingNodeModulesPlugin, [util.paths.nodeModules])
+            .end()
+            .plugin('InlineChunkHtmlPlugin')
+            .use(InlineChunkHtmlPlugin, [HtmlWebpackPlugin, [/runtime-.+[.]js/]])
+            .end()
+            .plugin('InlineScriptHtmlPlugin')
+            .use(InlineScriptHtmlPlugin, [HtmlWebpackPlugin, ''])
+            .end()
+            .plugin('EnvScriptHtmlPlugin')
+            .use(EnvScriptHtmlPlugin, [HtmlWebpackPlugin])
+            .end()
+            .plugin('CopyPlugin')
+            .use(CopyPlugin, [[{ from: util.paths.copyFilePath, to: util.paths.appBuild }]]);
         return context;
     };
 }
@@ -345,7 +367,11 @@ function globalConfig(options) {
                 context.mode('development');
             }
         );
-
+        context.stats({
+            children: false,
+            entrypoints: false,
+            modules: false
+        });
         context.node
             .set('module', 'empty')
             .set('dgram', 'empty')
@@ -355,7 +381,7 @@ function globalConfig(options) {
             .set('net', 'empty')
             .set('tls', 'empty')
             .set('child_process', 'empty');
-
+        context.performance.hints(false);
         return context;
     };
 }
@@ -364,6 +390,7 @@ module.exports = {
     entry,
     output,
     htmlPlugin,
+    eslintLoader,
     javascriptLoader,
     globalConfig,
     cssLoader,
@@ -371,6 +398,5 @@ module.exports = {
     imageLoader,
     fileLoader,
     resolveConfig,
-    basePlugins,
-    eslintLoader
+    basePlugins
 };

@@ -4,7 +4,8 @@
             "react": "",
             "react-dom": "",
             "react-router-dom": "",
-            "eslint-config-alloy": "^3.5.0"
+            "eslint-config-alloy": "^3.5.0",
+            "eslint-plugin-react": "^7.18.3"
         }
     },
     "dev": {

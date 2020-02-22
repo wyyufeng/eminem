@@ -22,6 +22,24 @@ const util = {
         },
         get dotEnv() {
             return resolveApp('.env');
+        },
+        get nodeModules() {
+            return resolveApp('node_modules');
+        },
+        get copyFilePath() {
+            return resolveApp('COPYIT');
+        },
+        get appsAbsolutePath() {
+            const emrc = fs.readJSONSync(resolveApp('eminem.json'));
+            const apps = emrc.app;
+
+            return apps.reduce((a, b) => {
+                a[b.name] = {
+                    html: resolveApp('public/' + b.html),
+                    entry: resolveApp('sec/app/' + b.entry)
+                };
+                return a;
+            }, {});
         }
     },
     version: {
