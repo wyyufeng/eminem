@@ -57,6 +57,8 @@ class InitTask extends Task {
                 .then(() => {
                     info('项目创建完成!');
                     console.log(`使用 ${chalk.cyan('cd ' + this.appName)}`);
+                    console.log(`使用 ${chalk.cyan('npm start')}     启动项目`);
+                    console.log(`使用 ${chalk.cyan('npm run build')} 构建项目`);
                 })
                 .catch(() => {
                     error('嘤嘤嘤,项目创建失败了!');

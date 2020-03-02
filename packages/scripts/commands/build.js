@@ -58,7 +58,14 @@ function build() {
     }
     const buildDir = util.paths.appBuild;
 
-    fs.emptyDirSync(buildDir);
+    try {
+        fs.emptyDirSync(buildDir);
+    } catch (e) {
+        console.log(e);
+        console.log(
+            `${chalk.redBright('删除build文件夹失败,请检查build文件夹是否被其他程序占用！')}`
+        );
+    }
     console.log('正在构建...');
     copyPublicFolder();
     compiler.run((err, stats) => {
@@ -94,7 +101,9 @@ function printFileSize(dir) {
     console.log();
     console.log(msg);
     console.log();
-    const warnChunks = result.filter((file) => file.size > WARN_AFTER_BUNDLE_GZIP_SIZE);
+    const warnChunks = result.filter(
+        (file) => file.size > WARN_AFTER_BUNDLE_GZIP_SIZE && path.extname(file) !== '.map'
+    );
     if (warnChunks.length > 0) {
         console.log(
             chalk.yellowBright(
