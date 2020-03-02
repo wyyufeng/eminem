@@ -5,8 +5,11 @@ const util = require('../commands/util');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const webpack = require('webpack');
 const path = require('path');
+const fs = require('fs-extra');
 const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
 const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin');
+const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin');
+
 const InlineChunkHtmlPlugin = require('react-dev-utils/InlineChunkHtmlPlugin');
 const InlineScriptHtmlPlugin = require('../plugins/InlineScriptHtmlPlugin');
 const EnvScriptHtmlPlugin = require('../plugins/EnvScriptHtmlPlugin');
@@ -339,14 +342,23 @@ function basePlugins(options) {
             .plugin('InlineChunkHtmlPlugin')
             .use(InlineChunkHtmlPlugin, [HtmlWebpackPlugin, [/runtime-.+[.]js/]])
             .end()
+            .plugin('ModuleNotFoundPlugin')
+            .use(ModuleNotFoundPlugin, [util.paths.appSrc])
+            .end()
             .plugin('InlineScriptHtmlPlugin')
             .use(InlineScriptHtmlPlugin, [HtmlWebpackPlugin, ''])
             .end()
             .plugin('EnvScriptHtmlPlugin')
             .use(EnvScriptHtmlPlugin, [HtmlWebpackPlugin])
             .end()
-            .plugin('CopyPlugin')
-            .use(CopyPlugin, [[{ from: util.paths.copyFilePath, to: util.paths.appBuild }]]);
+            .when(fs.emptyDirSync(util.paths.copyFilePath), (config) => {
+                config
+                    .plugin('CopyPlugin')
+                    .use(CopyPlugin, [
+                        [{ from: util.paths.copyFilePath, to: util.paths.appBuild }]
+                    ]);
+            });
+
         return context;
     };
 }

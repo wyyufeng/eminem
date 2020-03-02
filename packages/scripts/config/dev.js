@@ -1,7 +1,6 @@
 const util = require('../commands/util');
 const webpack = require('webpack');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
-
 // 配置开发服务器
 function devServer(options) {
     return (context) => {
@@ -10,7 +9,7 @@ function devServer(options) {
             .compress(true)
             .clientLogLevel('none')
             .contentBase(util.paths.appPublic)
-            // .public(options)
+            .publicPath('/')
             .watchContentBase(true)
             .hot(true)
             .host('0.0.0.0')

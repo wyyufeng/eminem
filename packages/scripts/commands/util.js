@@ -36,7 +36,7 @@ const util = {
             return apps.reduce((a, b) => {
                 a[b.name] = {
                     html: resolveApp('public/' + b.html),
-                    entry: resolveApp('sec/app/' + b.entry)
+                    entry: resolveApp('src/app/' + b.entry)
                 };
                 return a;
             }, {});

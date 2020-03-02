@@ -102,7 +102,7 @@ function printFileSize(dir) {
     console.log(msg);
     console.log();
     const warnChunks = result.filter(
-        (file) => file.size > WARN_AFTER_BUNDLE_GZIP_SIZE && path.extname(file) !== '.map'
+        (file) => file.size > WARN_AFTER_BUNDLE_GZIP_SIZE && path.extname(file.file) !== '.map'
     );
     if (warnChunks.length > 0) {
         console.log(
