@@ -14,6 +14,7 @@ module.exports = {
         ecmaVersion: 2018
     },
     rules: {
-        'no-console': 0
+        'no-console': 0,
+        'no-unused-vars': 'warn'
     }
 };

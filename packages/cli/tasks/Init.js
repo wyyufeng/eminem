@@ -28,7 +28,7 @@ class InitTask extends Task {
             name: name,
             version: '0.0.0',
             scripts: {
-                start: 'em-scripts serve',
+                start: 'em-scripts dev',
                 build: 'em-scripts build',
                 analyse: 'em-scripts analyse'
             }
