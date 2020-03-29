@@ -79,7 +79,12 @@ function build() {
         }
         printFileSize(buildDir);
         console.log('构建完成！');
-        fs.writeJSON('./stats.json', stats.toJson());
+        fs.writeJSON(
+            './stats.json',
+            stats.toJson({
+                source: false
+            })
+        );
         console.log(
             `您可以通过命令 ${chalk.blueBright('npx serve build')} 启动静态服务查看构建结果！`
         );
