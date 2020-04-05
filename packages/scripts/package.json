@@ -1,6 +1,6 @@
 {
   "name": "em-scripts",
-  "version": "1.1.9",
+  "version": "1.1.10",
   "description": "em-scripts",
   "author": "wyyufeng <wyyufeng@gmail.com>",
   "homepage": "",
@@ -47,6 +47,7 @@
     "log-update": "^3.3.0",
     "mini-css-extract-plugin": "^0.8.0",
     "optimize-css-assets-webpack-plugin": "^5.0.3",
+    "postcss": "^7.0.27",
     "postcss-flexbugs-fixes": "^4.1.0",
     "postcss-loader": "^3.0.0",
     "postcss-normalize": "^8.0.1",
@@ -65,8 +66,7 @@
     "webpack-cli": "^3.3.10",
     "webpack-dev-server": "^3.9.0",
     "webpack-manifest-plugin": "^2.2.0",
-    "webpack-sources": "^1.4.3",
-    "postcss": "^7.0.27"
+    "webpack-sources": "^1.4.3"
   },
   "gitHead": "0a87af0efbe2b559c50d333de3488980fcafac9d",
   "devDependencies": {
