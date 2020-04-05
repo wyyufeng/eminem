@@ -156,14 +156,7 @@ function cssLoader(options) {
                         .end();
                 },
                 (config) => {
-                    config
-                        .use('style')
-                        .loader(require.resolve('style-loader'))
-                        .options({
-                            sourceMap: true
-                        })
-
-                        .end();
+                    config.use('style').loader(require.resolve('style-loader')).end();
                 }
             )
             .use('css')
@@ -213,9 +206,7 @@ function sassLoader(options) {
                     });
                 },
                 (config) => {
-                    config.use('style').loader(require.resolve('style-loader')).options({
-                        sourceMap: true
-                    });
+                    config.use('style').loader(require.resolve('style-loader'));
                 }
             )
             .use('css')

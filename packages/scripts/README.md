@@ -1,11 +1,1 @@
-# `scripts`
-
-> TODO: description
-
-## Usage
-
-```
-const scripts = require('scripts');
-
-// TODO: DEMONSTRATE API
-```
+eminem 脚本文件

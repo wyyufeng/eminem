@@ -2,7 +2,7 @@ const Task = require('./Task');
 const fs = require('fs-extra');
 const path = require('path');
 const chalk = require('chalk');
-const { info, success, error, installPkg } = require('./util');
+const { info, success, error, installPkg, warn } = require('./util');
 class InitTask extends Task {
     constructor(name, template = 'em-template', useYarn, usecnpm) {
         super();
@@ -55,7 +55,11 @@ class InitTask extends Task {
             this.copyTemplate();
             this.getTemplateInfo()
                 .then(() => {
-                    info('项目创建完成!');
+                    success('项目创建完成!');
+                    warn('请单独安装 sharp ');
+                    warn(
+                        'SHARP_DIST_BASE_URL="https://npm.taobao.org/mirrors/sharp-libvips/v8.5.5/libvips-8.5.5-win32-x64.tar.gz" npm install sharp"'
+                    );
                     console.log(`使用 ${chalk.cyan('cd ' + this.appName)}`);
                     console.log(`使用 ${chalk.cyan('npm start')}     启动项目`);
                     console.log(`使用 ${chalk.cyan('npm run build')} 构建项目`);

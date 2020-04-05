@@ -1,11 +1,9 @@
-# `commands`
-
-> TODO: description
-
-## Usage
+eminem 命令行
 
 ```
-const commands = require('commands');
+npm i em-cli -g
+em init my-app
 
-// TODO: DEMONSTRATE API
 ```
+
+通过 em --help 　查看帮助信息

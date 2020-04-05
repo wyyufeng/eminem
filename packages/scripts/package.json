@@ -16,7 +16,8 @@
     "bin",
     "config",
     "commands",
-    "plugins"
+    "plugins",
+    "utils"
   ],
   "dependencies": {
     "@babel/core": "^7.7.4",
