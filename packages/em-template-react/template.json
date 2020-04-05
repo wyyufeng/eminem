@@ -11,8 +11,9 @@
     "dev": {
         "meta": {
             "name": "index",
-            "entry": "index.js",
+            "entry": "app/index.js",
             "html": "index.html"
-        }
+        },
+        "useTypeScript": false
     }
 }

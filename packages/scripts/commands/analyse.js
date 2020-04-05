@@ -2,8 +2,8 @@ const { exec } = require('child_process');
 const path = require('path');
 const fs = require('fs-extra');
 const statsPath = path.resolve(process.cwd(), './stats.json');
-const util = require('./util');
-const buildPath = util.paths.appBuild;
+const paths = require('../utils/paths');
+const buildPath = paths.appBuild;
 const chalk = require('chalk');
 
 const analyzerBinPath = path.resolve(

@@ -35,15 +35,6 @@ class Task {
         return path.resolve(this.projectRoot, dest);
     }
     /**
-     * app目录
-     * @param {String} appName - app名称
-     * @returns {String} 地址
-     * @memberof Task
-     */
-    getAppDir(appName) {
-        return this.getDir(`src/app/${appName}`);
-    }
-    /**
      * 读取配置文件内容
      *
      * @returns {Object} - 配置文件对象

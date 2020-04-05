@@ -87,7 +87,9 @@ class InitTask extends Task {
         if (fs.existsSync(this.templatePath)) {
             fs.copySync(this.templatePath, this.projectDir);
         } else {
-            error(`抱歉，无法找到模板文件: ${chalk.green(this.templatePath)}`);
+            error(
+                `抱歉，无法找到模板文件: ${chalk.red(this.templatePath)},请检查模板是否正常安装。`
+            );
             return;
         }
     }
@@ -105,6 +107,10 @@ class InitTask extends Task {
                 config.app.push(...templateMeta);
             } else {
                 config.app.push(templateMeta);
+            }
+            config.useTypeScript = !!templateJsonDev.useTypeScript;
+            if (templateJsonDev.useTypeScript) {
+                config.tsconfig = 'tsconfig.json';
             }
             fs.writeJSONSync(path.resolve(this.projectDir, './eminem.json'), config, {
                 spaces: 4,

@@ -1,25 +1,28 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 const ManifestPlugin = require('webpack-manifest-plugin');
-const util = require('../commands/util');
+const paths = require('../utils/paths');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const webpack = require('webpack');
 const path = require('path');
 const fs = require('fs-extra');
+const resolve = require('resolve');
 const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
 const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin');
-const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin');
+const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 
+const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const InlineChunkHtmlPlugin = require('react-dev-utils/InlineChunkHtmlPlugin');
-const InlineScriptHtmlPlugin = require('../plugins/InlineScriptHtmlPlugin');
+const InlineCodeHtmlPlugin = require('../plugins/InlineCodeHtmlPlugin');
 const EnvScriptHtmlPlugin = require('../plugins/EnvScriptHtmlPlugin');
 const CopyPlugin = require('copy-webpack-plugin');
-
+const typescriptFormatter = require('react-dev-utils/typescriptFormatter');
 const getClientEnvironment = require('./env');
-
+const isImage = require('is-image');
 // 入口配置
 function entry(options) {
-    return function(context) {
+    return function (context) {
         options.app.forEach((entry) => {
             context
                 .entry(entry.name)
@@ -27,7 +30,7 @@ function entry(options) {
                 .when(options.isEnvDevelopment, (config) =>
                     config.add(require.resolve('react-dev-utils/webpackHotDevClient'))
                 )
-                .add(path.resolve(options.appDirectory, `./src/app/${entry.entry}`))
+                .add(path.resolve(options.appPath, `./src/${entry.entry}`))
                 .end();
         });
         return context;
@@ -36,7 +39,7 @@ function entry(options) {
 
 // 输出配置
 function output(options) {
-    return function(context) {
+    return function (context) {
         context.output
             .when(
                 options.isEnvProduction,
@@ -59,7 +62,7 @@ function output(options) {
 
 // 配置html插件
 function htmlPlugin(options) {
-    return function(context) {
+    return function (context) {
         options.app.forEach((page) => {
             const hwpOptions = Object.assign(
                 {},
@@ -113,16 +116,16 @@ function eslintLoader(options) {
         return context;
     };
 }
-// 配置 js 文件处理
+// 配置 js|ts 文件处理
 function javascriptLoader(options) {
-    return function(context) {
+    return function (context) {
         context.module
 
             .rule('javascript')
             .test(/\.(js|mjs|jsx|ts|tsx)$/)
-            .include.add(util.paths.appSrc)
+            .include.add(paths.appSrc)
             .end()
-            .use('babel')
+            .use('babel-loader')
             .loader(require.resolve('babel-loader'))
             .options({
                 cacheDirectory: true,
@@ -137,7 +140,7 @@ function javascriptLoader(options) {
 
 // 配置 css 文件处理
 function cssLoader(options) {
-    return function(context) {
+    return function (context) {
         context.module
             .rule('css')
             .test(/\.css$/)
@@ -147,12 +150,18 @@ function cssLoader(options) {
                     config
                         .use('mini-css')
                         .loader(MiniCssExtractPlugin.loader)
+                        .options({
+                            publicPath: '../'
+                        })
                         .end();
                 },
                 (config) => {
                     config
                         .use('style')
                         .loader(require.resolve('style-loader'))
+                        .options({
+                            sourceMap: true
+                        })
 
                         .end();
                 }
@@ -169,16 +178,20 @@ function cssLoader(options) {
             .options({
                 sourceMap: true,
                 ident: 'postcss',
-                plugins: () => [
-                    require('postcss-flexbugs-fixes'),
-                    require('postcss-preset-env')({
-                        autoprefixer: {
-                            flexbox: 'no-2009'
-                        },
-                        stage: 3
-                    }),
-                    require('postcss-normalize')
-                ]
+                plugins: () => {
+                    console.log('call it');
+                    return [
+                        require('../plugins/WebpPostcssPlugin')(),
+                        require('postcss-flexbugs-fixes')(),
+                        require('postcss-preset-env')({
+                            autoprefixer: {
+                                flexbox: 'no-2009'
+                            },
+                            stage: 3
+                        }),
+                        require('postcss-normalize')()
+                    ];
+                }
             })
 
             .end();
@@ -195,10 +208,14 @@ function sassLoader(options) {
             .when(
                 options.isEnvProduction,
                 (config) => {
-                    config.use('mini-css').loader(MiniCssExtractPlugin.loader);
+                    config.use('mini-css').loader(MiniCssExtractPlugin.loader).options({
+                        publicPath: '../'
+                    });
                 },
                 (config) => {
-                    config.use('style').loader(require.resolve('style-loader'));
+                    config.use('style').loader(require.resolve('style-loader')).options({
+                        sourceMap: true
+                    });
                 }
             )
             .use('css')
@@ -214,14 +231,15 @@ function sassLoader(options) {
                 sourceMap: true,
                 ident: 'postcss',
                 plugins: () => [
-                    require('postcss-flexbugs-fixes'),
+                    // require('../plugins/PostcssPlugin'),
+                    require('postcss-flexbugs-fixes')(),
                     require('postcss-preset-env')({
                         autoprefixer: {
                             flexbox: 'no-2009'
                         },
                         stage: 3
                     }),
-                    require('postcss-normalize')
+                    require('postcss-normalize')()
                 ]
             })
             .end()
@@ -245,6 +263,7 @@ function imageLoader() {
         context.module
             .rule('image')
             .test(/\.(ico|png|jpg|jpeg|gif|svg|webp)(\?v=\d+\.\d+\.\d+)?$/)
+
             .use('url-loader')
             .loader(require.resolve('url-loader'))
             .options({
@@ -252,6 +271,9 @@ function imageLoader() {
                 name: 'static/[name].[hash:8].[ext]'
             })
             .end();
+        // .use('test-loader')
+        // .loader(require.resolve('./test-loader.js'))
+        // .end();
 
         return context;
     };
@@ -282,7 +304,7 @@ function fileLoader() {
 }
 
 // 配置 alias  处理
-function resolveConfig(options) {
+function resolveModule(options) {
     return (context) => {
         context.resolve.modules.values('node_modules');
         context.resolve.alias.set('@', options.appSrc);
@@ -291,7 +313,7 @@ function resolveConfig(options) {
 }
 
 // 配置其他插件
-function basePlugins(options) {
+function plugins(options) {
     return (context) => {
         context
             .plugin('IgnorePlugin')
@@ -314,20 +336,38 @@ function basePlugins(options) {
             .plugin('ManifestPlugin')
             .use(ManifestPlugin, [
                 {
-                    fileName: `asset-manifest~v${options.version}.json`,
+                    fileName: `assets-manifest.v${options.version}.json`,
                     publicPath: options.appPublic,
-                    seed: { files: {}, sourceMaps: {} },
+                    seed: { js: {}, css: {}, image: {}, sourceMaps: {}, html: {}, others: {} },
                     generate: (seed, files) => {
                         const manifestFiles = files.reduce((manifest, file) => {
-                            const ext = path.extname(file.name);
+                            const ext = path.extname(file.path);
+                            const basename = path.basename(file.path);
                             if (ext === '.map') {
-                                manifest['sourceMaps'][file.name] = file.path;
+                                manifest['sourceMaps'][basename] = file.path;
                                 return manifest;
                             }
-                            manifest['files'][file.name] = file.path;
+                            if (isImage(basename)) {
+                                manifest['image'][basename] = file.path;
+                                return manifest;
+                            }
+                            if (ext === '.js') {
+                                manifest['js'][basename] = file.path;
+                                return manifest;
+                            }
+                            if (ext === '.css') {
+                                manifest['css'][basename] = file.path;
+                                return manifest;
+                            }
+                            if (ext === '.html' || ext === '.htm') {
+                                manifest['html'][basename] = file.path;
+                                return manifest;
+                            }
+                            manifest['others'][basename] = file.path;
                             return manifest;
                         }, seed);
-
+                        manifestFiles.version = options.version;
+                        manifestFiles.buildOn = new Date().toLocaleString();
                         return manifestFiles;
                     }
                 }
@@ -337,26 +377,62 @@ function basePlugins(options) {
             .use(InterpolateHtmlPlugin, [HtmlWebpackPlugin, getClientEnvironment('').raw])
             .end()
             .plugin('WatchMissingNodeModulesPlugin')
-            .use(WatchMissingNodeModulesPlugin, [util.paths.nodeModules])
+            .use(WatchMissingNodeModulesPlugin, [paths.nodeModules])
             .end()
             .plugin('InlineChunkHtmlPlugin')
-            .use(InlineChunkHtmlPlugin, [HtmlWebpackPlugin, [/runtime-.+[.]js/]])
+            .use(InlineChunkHtmlPlugin, [HtmlWebpackPlugin, [/runtime-.+[.]js/, /webp.css/]])
             .end()
             .plugin('ModuleNotFoundPlugin')
-            .use(ModuleNotFoundPlugin, [util.paths.appSrc])
+            .use(ModuleNotFoundPlugin, [paths.appSrc])
             .end()
-            .plugin('InlineScriptHtmlPlugin')
-            .use(InlineScriptHtmlPlugin, [HtmlWebpackPlugin, ''])
+            .plugin('InlineCodeHtmlPlugin')
+            .use(InlineCodeHtmlPlugin, [HtmlWebpackPlugin])
             .end()
             .plugin('EnvScriptHtmlPlugin')
             .use(EnvScriptHtmlPlugin, [HtmlWebpackPlugin])
             .end()
-            .when(fs.emptyDirSync(util.paths.copyFilePath), (config) => {
+            .plugin('WebpGeneratePlugin')
+            .use(require('../plugins/WebpGeneratePlugin'), [
+                InlineCodeHtmlPlugin,
+                HtmlWebpackPlugin
+            ])
+            .end()
+            .when(fs.emptyDirSync(paths.copyFilePath), (config) => {
                 config
                     .plugin('CopyPlugin')
-                    .use(CopyPlugin, [
-                        [{ from: util.paths.copyFilePath, to: util.paths.appBuild }]
-                    ]);
+                    .use(CopyPlugin, [[{ from: paths.copyFilePath, to: paths.appBuild }]]);
+            })
+            .when(options.useTypeScript, (config) => {
+                config.plugin('ForkTsCheckerWebpackPlugin').use(ForkTsCheckerWebpackPlugin, [
+                    {
+                        typescript: resolve.sync('typescript', {
+                            basedir: paths.nodeModules
+                        }),
+                        async: options.isEnvDevelopment,
+                        useTypescriptIncrementalApi: true,
+                        checkSyntacticErrors: true,
+                        resolveModuleNameModule: undefined,
+                        resolveTypeReferenceDirectiveModule: undefined,
+                        tsconfig: options.tsconfig,
+                        reportFiles: [
+                            '**',
+                            '!**/__tests__/**',
+                            '!**/?(*.)(spec|test).*',
+                            '!**/src/setupProxy.*',
+                            '!**/src/setupTests.*'
+                        ],
+                        silent: true,
+                        formatter: options.isEnvProduction ? typescriptFormatter : undefined
+                    }
+                ]);
+            })
+            .when(options.isEnvDevelopment, (config) => {
+                config
+                    .plugin('HotModuleReplacementPlugin')
+                    .use(webpack.HotModuleReplacementPlugin)
+                    .end()
+                    .plugin('CaseSensitivePathsPlugin')
+                    .use(CaseSensitivePathsPlugin);
             });
 
         return context;
@@ -409,6 +485,6 @@ module.exports = {
     sassLoader,
     imageLoader,
     fileLoader,
-    resolveConfig,
-    basePlugins
+    resolveModule,
+    plugins
 };

@@ -1,6 +1,5 @@
-const util = require('../commands/util');
-const webpack = require('webpack');
-const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
+const paths = require('../utils/paths');
+
 // 配置开发服务器
 function devServer(options) {
     return (context) => {
@@ -8,7 +7,7 @@ function devServer(options) {
             .disableHostCheck(true)
             .compress(true)
             .clientLogLevel('none')
-            .contentBase(util.paths.appPublic)
+            .contentBase(paths.appPublic)
             .publicPath('/')
             .watchContentBase(true)
             .hot(true)
@@ -29,18 +28,6 @@ function devServer(options) {
     };
 }
 
-// 开发环境插件
-function plugins() {
-    return (context) => {
-        context
-            .plugin('HotModuleReplacementPlugin')
-            .use(webpack.HotModuleReplacementPlugin)
-            .end()
-            .plugin('CaseSensitivePathsPlugin')
-            .use(CaseSensitivePathsPlugin);
-    };
-}
 module.exports = {
-    devServer,
-    plugins
+    devServer
 };

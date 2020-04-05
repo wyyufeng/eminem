@@ -3,7 +3,7 @@ const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 // 生产环境插件
 function optimization(options) {
-    return function(context) {
+    return function (context) {
         context.optimization
             .minimize(options.isEnvProduction)
             .minimizer('TerserPlugin')
@@ -35,7 +35,17 @@ function optimization(options) {
             .minimizer('css')
             .use(OptimizeCSSAssetsPlugin, [
                 {
-                    cssProcessorOptions: {}
+                    cssProcessorOptions: {
+                        parser: require('postcss-safe-parser'),
+                        map: {
+                            inline: false,
+
+                            annotation: true
+                        },
+                        cssProcessorPluginOptions: {
+                            preset: ['default', { minifyFontValues: { removeQuotes: false } }]
+                        }
+                    }
                 }
             ])
             .end()

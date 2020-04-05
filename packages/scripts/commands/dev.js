@@ -8,16 +8,18 @@ process.on('unhandledRejection', (err) => {
 require('../config/env');
 const { dev, base } = require('../config');
 const context = require('../config/context');
-const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
 const fs = require('fs-extra');
 const openBrowser = require('react-dev-utils/openBrowser');
 const chalk = require('chalk');
-const util = require('./util');
+const paths = require('../utils/paths');
+const version = require('../utils/version');
+
+const createCompiler = require('../utils/createCompiler');
 const { choosePort, prepareUrls } = require('react-dev-utils/WebpackDevServerUtils');
 let project;
 try {
-    project = fs.readJSONSync(util.resolveApp('eminem.json'));
+    project = fs.readJSONSync(paths.resolveApp('eminem.json'));
 } catch (error) {
     console.log();
     console.error('嘤嘤嘤~~当前不是eminem的工作目录！');
@@ -26,12 +28,12 @@ try {
 
 // 记录当前环境
 function setup() {
-    project.version = util.version.current();
+    project.version = version.current();
     project.isEnvProduction = false;
     project.isEnvDevelopment = true;
-    project.appDirectory = util.paths.appPath;
-    project.appSrc = util.paths.appSrc;
-    project.appPublic = util.paths.appPublic;
+    project.appPath = paths.appPath;
+    project.appSrc = paths.appSrc;
+    project.appPublic = paths.appPublic;
 }
 const port = 3000;
 const host = '0.0.0.0';
@@ -43,26 +45,9 @@ choosePort(host, port).then((port) => {
     }
     const urls = prepareUrls('http', host, port);
     project.urls = urls;
+    const compiler = createCompiler(base, project, context);
 
-    //compose context
-    const ctxMiddlewares = Object.keys(base).map((k) => base[k](project));
-    const emCfgPath = util.resolveApp('em.config.js');
-    if (fs.existsSync(emCfgPath)) {
-        ctxMiddlewares.push(require(emCfgPath)(project));
-    }
-    const ctxWrappers = ctxMiddlewares.reduceRight((a, b) => {
-        return (ctx) => a(b(ctx));
-    });
-    let compiler;
     let isFirstCompile = true;
-    try {
-        // console.log(JSON.stringify(ctxWrappers(context).toConfig(), null, 4));
-        compiler = webpack(ctxWrappers(context).toConfig());
-    } catch (err) {
-        console.log(err.message || err);
-        process.exit(1);
-    }
-
     compiler.hooks.failed.tap('failed', (err) => {
         console.log(err);
     });

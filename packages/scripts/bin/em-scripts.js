@@ -18,4 +18,5 @@ if (['dev', 'build', 'analyse'].includes(script)) {
     process.exit(result.status);
 } else {
     console.log('Unknown script "' + script + '".');
+    console.log('请使用以下脚本：dev,build,analyse');
 }

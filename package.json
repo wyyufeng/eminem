@@ -6,6 +6,7 @@
   },
   "dependencies": {
     "node-sass": "^4.13.0",
-    "ora": "^4.0.3"
+    "ora": "^4.0.3",
+    "postcss": "^7.0.27"
   }
 }

@@ -7,18 +7,19 @@ require('../config/env');
 
 const { base, prod } = require('../config');
 const context = require('../config/context');
-const webpack = require('webpack');
 const filesize = require('filesize');
 const fs = require('fs-extra');
 const path = require('path');
 const chalk = require('chalk');
 const gzipSize = require('gzip-size');
 const flatten = require('array-flatten').flatten;
-const util = require('./util');
+const paths = require('../utils/paths');
+const version = require('../utils/version');
+const createCompiler = require('../utils/createCompiler');
 const WARN_AFTER_BUNDLE_GZIP_SIZE = 250 * 1024; //kb
 let project;
 try {
-    project = fs.readJSONSync(util.resolveApp('eminem.json'));
+    project = fs.readJSONSync(paths.resolveApp('eminem.json'));
 } catch (error) {
     console.log();
     console.error('嘤嘤嘤~~当前不是eminem的工作目录！');
@@ -26,37 +27,21 @@ try {
 }
 
 function setup() {
-    util.version.inc();
-    project.version = util.version.current();
+    version.inc();
+    project.version = version.current();
     project.isEnvProduction = true;
     project.isEnvDevelopment = false;
-    project.appDirectory = util.paths.appPath;
-    project.appSrc = util.paths.appSrc;
-    project.appBuild = util.paths.appBuild;
-    project.appBuildFileName = util.paths.appBuildFileName;
+    project.appPath = paths.appPath;
+    project.appSrc = paths.appSrc;
+    project.appBuild = paths.appBuild;
+    project.appBuildFileName = paths.appBuildFileName;
 }
 setup();
 build();
 
 function build() {
-    let compiler;
-    const ctxMap = Object.assign(base, prod);
-    const ctxMiddlewares = Object.keys(ctxMap).map((k) => ctxMap[k](project));
-    const emCfgPath = util.resolveApp('em.config.js');
-    if (fs.existsSync(emCfgPath)) {
-        ctxMiddlewares.push(require(emCfgPath)(project));
-    }
-    const ctxWrappers = ctxMiddlewares.reduceRight((a, b) => {
-        return (ctx) => a(b(ctx));
-    });
-
-    try {
-        compiler = webpack(ctxWrappers(context).toConfig());
-    } catch (err) {
-        console.log(err.message || err);
-        process.exit(1);
-    }
-    const buildDir = util.paths.appBuild;
+    let compiler = createCompiler(Object.assign(base, prod), project, context);
+    const buildDir = paths.appBuild;
 
     try {
         fs.emptyDirSync(buildDir);
@@ -71,7 +56,7 @@ function build() {
     compiler.run((err, stats) => {
         if (err) {
             console.log(`嘤嘤嘤~ 构建失败！`);
-            console.log(err.message);
+            console.log(err);
             process.exit(1);
         }
         if (stats.hasErrors()) {
@@ -132,7 +117,7 @@ function measureFileSize(file) {
                 return measureFileSize(path.resolve(file, f));
             } else {
                 return {
-                    file: path.resolve(file, f).split(util.paths.appBuildFileName)[1],
+                    file: path.resolve(file, f).split(paths.appBuildFileName)[1],
                     size: gzipSize.fileSync(path.resolve(file, f))
                 };
             }
@@ -146,9 +131,9 @@ function measureFileSize(file) {
 }
 
 function copyPublicFolder() {
-    const appsAbsolutePath = util.paths.appsAbsolutePath;
+    const appsAbsolutePath = paths.appsAbsolutePath;
     const htmlPaths = Object.keys(appsAbsolutePath).map((key) => appsAbsolutePath[key].html);
-    fs.copySync(util.paths.appPublic, util.paths.appBuild, {
+    fs.copySync(paths.appPublic, paths.appBuild, {
         dereference: true,
         filter: (file) => !htmlPaths.includes(file)
     });

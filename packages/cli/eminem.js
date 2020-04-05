@@ -19,8 +19,8 @@ program
     .command('init <project-directory>')
     .description('初始化项目')
     .option('--template <template>', '模板名称')
-    .option('--useYarn', '是否使用yarn作为包管理器')
-    .option('--usecnpm', '使用淘宝源')
+    .option('--useYarn', '是否使用yarn作为包管理器,默认false')
+    .option('--usecnpm', '使用淘宝源,默认false')
     .action((name, options) => {
         const projectDir = path.resolve(process.cwd(), name);
         const isCurrentDir = name === '.';
