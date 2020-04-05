@@ -56,9 +56,8 @@ class InitTask extends Task {
             this.getTemplateInfo()
                 .then(() => {
                     success('项目创建完成!');
-                    warn('请单独安装 sharp ');
                     warn(
-                        'SHARP_DIST_BASE_URL="https://npm.taobao.org/mirrors/sharp-libvips/v8.5.5/libvips-8.5.5-win32-x64.tar.gz" npm install sharp"'
+                        'em使用sharp(https://sharp.pixelplumbing.com/)来压缩优化图片，由于网络原因,请单独安装 npm install sharp '
                     );
                     console.log(`使用 ${chalk.cyan('cd ' + this.appName)}`);
                     console.log(`使用 ${chalk.cyan('npm start')}     启动项目`);
