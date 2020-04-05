@@ -89,7 +89,7 @@ Map {
 
 #### template
 
-eminem 使用模板提供各种类型的项目的预设，并且提供了两类项目模板 `vanilla app` 和`react app`（事实上可以通过`vanilla app`模板修改为任意模板）。
+eminem 使用模板提供各种类型的项目的预设，并且提供了两类项目模板 [`vanilla app`](https://github.com/wyyufeng/eminem/tree/master/packages/em-template) 和[`react app`](https://github.com/wyyufeng/eminem/tree/master/packages/em-template-react)（事实上可以通过`vanilla app`模板修改为任意模板）。
 
 对于一个模板需要在根目录包含 `template.json`文件和 template 文件夹，并在该文件夹下增加你需要的东西，最后将其发布到 npm 即可(后续可能会支持 git repo).
 
@@ -115,4 +115,3 @@ eminem 使用模板提供各种类型的项目的预设，并且提供了两类�
 ```bash
 em init --template=your-template-package-name
 ```
-
