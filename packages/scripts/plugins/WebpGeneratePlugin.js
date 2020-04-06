@@ -71,7 +71,9 @@ module.exports = class WebpGeneratePlugin {
                             .then((data) => {
                                 const source = new RawSource(data);
                                 fs.writeFileSync(cacheFilePath, data);
-                                compilation.assets[`${asset.filename}_.webp`] = source;
+                                compilation.assets[
+                                    `${asset.filename}${this.options.webpSuffix}`
+                                ] = source;
                                 resolve();
                             })
                             .catch((err) => {
@@ -132,7 +134,7 @@ module.exports = class WebpGeneratePlugin {
                 _webpRuntime: true
             });
         });
-        compiler.hooks.compilation.tap('WebpGeneratePlugin', (compilation) => {
+        compiler.hooks.afterCompile.tap('WebpGeneratePlugin', (compilation) => {
             compilation.hooks.optimizeChunkAssets.tapAsync(
                 'WebpGeneratePlugin',
                 (chunks, callback) => {

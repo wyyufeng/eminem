@@ -20,9 +20,11 @@ const CopyPlugin = require('copy-webpack-plugin');
 const typescriptFormatter = require('react-dev-utils/typescriptFormatter');
 const getClientEnvironment = require('./env');
 const isImage = require('is-image');
-// 入口配置
+
+/**@typedef {import('webpack-chain')} Context */
+
 function entry(options) {
-    return function (context) {
+    return function (/** @type {Context} */ context) {
         options.app.forEach((entry) => {
             context
                 .entry(entry.name)
@@ -39,7 +41,7 @@ function entry(options) {
 
 // 输出配置
 function output(options) {
-    return function (context) {
+    return function (/** @type {Context} */ context) {
         context.output
             .when(
                 options.isEnvProduction,
@@ -54,6 +56,7 @@ function output(options) {
                         .filename('js/[name].bundle.js')
                         .chunkFilename('js/[name].chunk.js')
             )
+            .pathinfo(false)
             .publicPath('/')
             .end();
         return context;
@@ -62,7 +65,7 @@ function output(options) {
 
 // 配置html插件
 function htmlPlugin(options) {
-    return function (context) {
+    return function (/** @type {Context} */ context) {
         options.app.forEach((page) => {
             const hwpOptions = Object.assign(
                 {},
@@ -97,7 +100,7 @@ function htmlPlugin(options) {
 }
 // 配置 eslint
 function eslintLoader(options) {
-    return (context) => {
+    return (/** @type {Context} */ context) => {
         context.module
             .rule('eslint')
             .test(/\.(js|mjs|jsx|ts|tsx)$/)
@@ -118,7 +121,7 @@ function eslintLoader(options) {
 }
 // 配置 js|ts 文件处理
 function javascriptLoader(options) {
-    return function (context) {
+    return function (/** @type {Context} */ context) {
         context.module
 
             .rule('javascript')
@@ -140,7 +143,7 @@ function javascriptLoader(options) {
 
 // 配置 css 文件处理
 function cssLoader(options) {
-    return function (context) {
+    return function (/** @type {Context} */ context) {
         context.module
             .rule('css')
             .test(/\.css$/)
@@ -172,9 +175,7 @@ function cssLoader(options) {
                 sourceMap: true,
                 ident: 'postcss',
                 plugins: () => {
-                    console.log('call it');
                     return [
-                        require('../plugins/WebpPostcssPlugin')(),
                         require('postcss-flexbugs-fixes')(),
                         require('postcss-preset-env')({
                             autoprefixer: {
@@ -194,7 +195,7 @@ function cssLoader(options) {
 
 // 配置 sass 文件处理
 function sassLoader(options) {
-    return (context) => {
+    return (/** @type {Context} */ context) => {
         context.module
             .rule('sass')
             .test(/\.scss$/)
@@ -250,7 +251,7 @@ function sassLoader(options) {
 
 // 配置图片文件处理
 function imageLoader() {
-    return (context) => {
+    return (/** @type {Context} */ context) => {
         context.module
             .rule('image')
             .test(/\.(ico|png|jpg|jpeg|gif|svg|webp)(\?v=\d+\.\d+\.\d+)?$/)
@@ -272,7 +273,7 @@ function imageLoader() {
 
 // 配置其他文件处理
 function fileLoader() {
-    return (context) => {
+    return (/** @type {Context} */ context) => {
         context.module
             .rule('file')
             .exclude.add([
@@ -296,7 +297,7 @@ function fileLoader() {
 
 // 配置 alias  处理
 function resolveModule(options) {
-    return (context) => {
+    return (/** @type {Context} */ context) => {
         context.resolve.modules.values('node_modules');
         context.resolve.alias.set('@', options.appSrc);
         return context;
@@ -305,7 +306,7 @@ function resolveModule(options) {
 
 // 配置其他插件
 function plugins(options) {
-    return (context) => {
+    return (/** @type {Context} */ context) => {
         context
             .plugin('IgnorePlugin')
             .use(webpack.IgnorePlugin, [/^\.\/locale$/, /moment$/])
@@ -382,12 +383,15 @@ function plugins(options) {
             .plugin('EnvScriptHtmlPlugin')
             .use(EnvScriptHtmlPlugin, [HtmlWebpackPlugin])
             .end()
-            .plugin('WebpGeneratePlugin')
-            .use(require('../plugins/WebpGeneratePlugin'), [
-                InlineCodeHtmlPlugin,
-                HtmlWebpackPlugin
-            ])
-            .end()
+            .when(options.isEnvProduction, (config) => {
+                config
+                    .plugin('WebpGeneratePlugin')
+                    .use(require('../plugins/WebpGeneratePlugin'), [
+                        InlineCodeHtmlPlugin,
+                        HtmlWebpackPlugin
+                    ])
+                    .end();
+            })
             .when(fs.emptyDirSync(paths.copyFilePath), (config) => {
                 config
                     .plugin('CopyPlugin')
@@ -432,7 +436,7 @@ function plugins(options) {
 
 // 其他全局配置
 function globalConfig(options) {
-    return (context) => {
+    return (/** @type {Context} */ context) => {
         context.when(
             options.isEnvProduction,
             (config) => {
@@ -461,6 +465,7 @@ function globalConfig(options) {
             .set('tls', 'empty')
             .set('child_process', 'empty');
         context.performance.hints(false);
+
         return context;
     };
 }

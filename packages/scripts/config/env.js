@@ -27,7 +27,7 @@ process.env.NODE_PATH = (process.env.NODE_PATH || '')
 function getClientEnvironment(publicUrl) {
     const raw = Object.keys(process.env)
         .filter((env) => {
-            return env.includes('EM');
+            return env.includes('ENV');
         })
         .reduce(
             (env, key) => {

@@ -1,0 +1,15 @@
+{
+    "type": "object",
+    "properties": {
+        "webpackFinal": {
+            "instanceof": "Function"
+        },
+        "sourceMap": {
+            "type": "boolean"
+        },
+        "publicPath": {
+            "type": "string"
+        }
+    },
+    "additionalProperties": false
+}

@@ -14,15 +14,18 @@ const openBrowser = require('react-dev-utils/openBrowser');
 const chalk = require('chalk');
 const paths = require('../utils/paths');
 const version = require('../utils/version');
+const validate = require('schema-utils');
 
 const createCompiler = require('../utils/createCompiler');
 const { choosePort, prepareUrls } = require('react-dev-utils/WebpackDevServerUtils');
 let project;
 try {
     project = fs.readJSONSync(paths.resolveApp('eminem.json'));
+    validate(require('../utils/project.json'), project);
 } catch (error) {
+    console.log(error.message);
     console.log();
-    console.error('嘤嘤嘤~~当前不是eminem的工作目录！');
+    console.error('嘤嘤嘤~~eminem.json好像有点问题！');
     process.exit(1);
 }
 
@@ -63,9 +66,7 @@ choosePort(host, port).then((port) => {
     });
     const devServer = new WebpackDevServer(
         compiler,
-        dev
-            .devServer(project)(context)
-            .toConfig().devServer
+        dev.devServer(project)(context).toConfig().devServer
     );
     devServer.listen(port, host, (err) => {
         if (err) {
