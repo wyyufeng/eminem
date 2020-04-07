@@ -7,9 +7,6 @@
         "version": {
             "type": "string"
         },
-        "useTypeScript": {
-            "type": "boolean"
-        },
         "app": {
             "type": "array",
             "items": {

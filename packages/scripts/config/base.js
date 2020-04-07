@@ -23,16 +23,16 @@ const isImage = require('is-image');
 
 /**@typedef {import('webpack-chain')} Context */
 
-function entry(options) {
+function entry(project) {
     return function (/** @type {Context} */ context) {
-        options.app.forEach((entry) => {
+        project.app.forEach((entry) => {
             context
                 .entry(entry.name)
 
-                .when(options.isEnvDevelopment, (config) =>
+                .when(project.isEnvDevelopment, (config) =>
                     config.add(require.resolve('react-dev-utils/webpackHotDevClient'))
                 )
-                .add(path.resolve(options.appPath, `./src/${entry.entry}`))
+                .add(path.resolve(project.appPath, `./src/${entry.entry}`))
                 .end();
         });
         return context;
@@ -40,14 +40,14 @@ function entry(options) {
 }
 
 // 输出配置
-function output(options) {
+function output(project) {
     return function (/** @type {Context} */ context) {
         context.output
             .when(
-                options.isEnvProduction,
+                project.isEnvProduction,
                 (config) =>
                     config
-                        .path(options.appBuild)
+                        .path(project.appBuild)
                         .filename('js/[name].[contenthash:8].js')
                         .chunkFilename('js/[name].[contenthash:8].chunk.js'),
                 (config) =>
@@ -57,17 +57,17 @@ function output(options) {
                         .chunkFilename('js/[name].chunk.js')
             )
             .pathinfo(false)
-            .publicPath('/')
+            .publicPath(project.publicPath)
             .end();
         return context;
     };
 }
 
 // 配置html插件
-function htmlPlugin(options) {
+function htmlPlugin(project) {
     return function (/** @type {Context} */ context) {
-        options.app.forEach((page) => {
-            const hwpOptions = Object.assign(
+        project.app.forEach((page) => {
+            const hwpproject = Object.assign(
                 {},
                 {
                     inject: true,
@@ -76,7 +76,7 @@ function htmlPlugin(options) {
                     template: path.resolve(process.cwd(), `./public/${page.html}`)
                 },
 
-                options.isEnvProduction
+                project.isEnvProduction
                     ? {
                           minify: {
                               removeComments: true,
@@ -93,18 +93,18 @@ function htmlPlugin(options) {
                       }
                     : undefined
             );
-            context.plugin(`htmlPlugin${page.name}`).use(HtmlWebpackPlugin, [{ ...hwpOptions }]);
+            context.plugin(`htmlPlugin${page.name}`).use(HtmlWebpackPlugin, [{ ...hwpproject }]);
         });
         return context;
     };
 }
 // 配置 eslint
-function eslintLoader(options) {
+function eslintLoader(project) {
     return (/** @type {Context} */ context) => {
         context.module
             .rule('eslint')
             .test(/\.(js|mjs|jsx|ts|tsx)$/)
-            .include.add(options.appSrc)
+            .include.add(project.appSrc)
             .end()
             .enforce('pre')
             .use('eslint-loader')
@@ -112,15 +112,15 @@ function eslintLoader(options) {
             .options({
                 formatter: require.resolve('react-dev-utils/eslintFormatter'),
                 eslintPath: require.resolve('eslint'),
-                failOnWarning: options.isEnvProduction,
-                failOnError: options.isEnvProduction
+                failOnWarning: project.isEnvProduction,
+                failOnError: project.isEnvProduction
             })
             .end();
         return context;
     };
 }
 // 配置 js|ts 文件处理
-function javascriptLoader(options) {
+function javascriptLoader(project) {
     return function (/** @type {Context} */ context) {
         context.module
 
@@ -133,7 +133,7 @@ function javascriptLoader(options) {
             .options({
                 cacheDirectory: true,
                 cacheCompression: false,
-                compact: options.isEnvProduction,
+                compact: project.isEnvProduction,
                 presets: [require.resolve('babel-preset-react-app')]
             });
 
@@ -142,18 +142,18 @@ function javascriptLoader(options) {
 }
 
 // 配置 css 文件处理
-function cssLoader(options) {
+function cssLoader(project) {
     return function (/** @type {Context} */ context) {
         context.module
             .rule('css')
             .test(/\.css$/)
             .when(
-                options.isEnvProduction,
+                project.isEnvProduction,
                 (config) => {
                     config
                         .use('mini-css')
                         .loader(MiniCssExtractPlugin.loader)
-                        .options({
+                        .project({
                             publicPath: '../'
                         })
                         .end();
@@ -166,13 +166,13 @@ function cssLoader(options) {
             .loader(require.resolve('css-loader'))
             .options({
                 importLoaders: 1,
-                sourceMap: true
+                sourceMap: project.shouldUseSourceMap
             })
             .end()
             .use('postcss')
             .loader(require.resolve('postcss-loader'))
             .options({
-                sourceMap: true,
+                sourceMap: project.shouldUseSourceMap,
                 ident: 'postcss',
                 plugins: () => {
                     return [
@@ -194,15 +194,15 @@ function cssLoader(options) {
 }
 
 // 配置 sass 文件处理
-function sassLoader(options) {
+function sassLoader(project) {
     return (/** @type {Context} */ context) => {
         context.module
             .rule('sass')
             .test(/\.scss$/)
             .when(
-                options.isEnvProduction,
+                project.isEnvProduction,
                 (config) => {
-                    config.use('mini-css').loader(MiniCssExtractPlugin.loader).options({
+                    config.use('mini-css').loader(MiniCssExtractPlugin.loader).project({
                         publicPath: '../'
                     });
                 },
@@ -214,13 +214,13 @@ function sassLoader(options) {
             .loader(require.resolve('css-loader'))
             .options({
                 importLoaders: 1,
-                sourceMap: true
+                sourceMap: project.shouldUseSourceMap
             })
             .end()
             .use('postcss')
             .loader(require.resolve('postcss-loader'))
             .options({
-                sourceMap: true,
+                sourceMap: project.shouldUseSourceMap,
                 ident: 'postcss',
                 plugins: () => [
                     // require('../plugins/PostcssPlugin'),
@@ -238,12 +238,12 @@ function sassLoader(options) {
             .use('resolve-url')
             .loader(require.resolve('resolve-url-loader'))
             .options({
-                sourceMap: true
+                sourceMap: project.shouldUseSourceMap
             })
             .end()
             .use('scss')
             .loader(require.resolve('sass-loader'))
-            .options({ sourceMap: true })
+            .options({ sourceMap: project.shouldUseSourceMap })
             .end();
         return context;
     };
@@ -296,16 +296,16 @@ function fileLoader() {
 }
 
 // 配置 alias  处理
-function resolveModule(options) {
+function resolveModule(project) {
     return (/** @type {Context} */ context) => {
         context.resolve.modules.values('node_modules');
-        context.resolve.alias.set('@', options.appSrc);
+        context.resolve.alias.set('@', project.appSrc);
         return context;
     };
 }
 
 // 配置其他插件
-function plugins(options) {
+function plugins(project) {
     return (/** @type {Context} */ context) => {
         context
             .plugin('IgnorePlugin')
@@ -328,8 +328,8 @@ function plugins(options) {
             .plugin('ManifestPlugin')
             .use(ManifestPlugin, [
                 {
-                    fileName: `assets-manifest.v${options.version}.json`,
-                    publicPath: options.appPublic,
+                    fileName: `assets-manifest.v${project.version}.json`,
+                    publicPath: project.appPublic,
                     seed: { js: {}, css: {}, image: {}, sourceMaps: {}, html: {}, others: {} },
                     generate: (seed, files) => {
                         const manifestFiles = files.reduce((manifest, file) => {
@@ -358,7 +358,7 @@ function plugins(options) {
                             manifest['others'][basename] = file.path;
                             return manifest;
                         }, seed);
-                        manifestFiles.version = options.version;
+                        manifestFiles.version = project.version;
                         manifestFiles.buildOn = new Date().toLocaleString();
                         return manifestFiles;
                     }
@@ -383,7 +383,7 @@ function plugins(options) {
             .plugin('EnvScriptHtmlPlugin')
             .use(EnvScriptHtmlPlugin, [HtmlWebpackPlugin])
             .end()
-            .when(options.isEnvProduction, (config) => {
+            .when(project.isEnvProduction, (config) => {
                 config
                     .plugin('WebpGeneratePlugin')
                     .use(require('../plugins/WebpGeneratePlugin'), [
@@ -397,18 +397,18 @@ function plugins(options) {
                     .plugin('CopyPlugin')
                     .use(CopyPlugin, [[{ from: paths.copyFilePath, to: paths.appBuild }]]);
             })
-            .when(options.useTypeScript, (config) => {
+            .when(project.useTypeScript, (config) => {
                 config.plugin('ForkTsCheckerWebpackPlugin').use(ForkTsCheckerWebpackPlugin, [
                     {
                         typescript: resolve.sync('typescript', {
                             basedir: paths.nodeModules
                         }),
-                        async: options.isEnvDevelopment,
+                        async: project.isEnvDevelopment,
                         useTypescriptIncrementalApi: true,
                         checkSyntacticErrors: true,
                         resolveModuleNameModule: undefined,
                         resolveTypeReferenceDirectiveModule: undefined,
-                        tsconfig: options.tsconfig,
+                        tsconfig: project.tsconfig,
                         reportFiles: [
                             '**',
                             '!**/__tests__/**',
@@ -417,11 +417,11 @@ function plugins(options) {
                             '!**/src/setupTests.*'
                         ],
                         silent: true,
-                        formatter: options.isEnvProduction ? typescriptFormatter : undefined
+                        formatter: project.isEnvProduction ? typescriptFormatter : undefined
                     }
                 ]);
             })
-            .when(options.isEnvDevelopment, (config) => {
+            .when(project.isEnvDevelopment, (config) => {
                 config
                     .plugin('HotModuleReplacementPlugin')
                     .use(webpack.HotModuleReplacementPlugin)
@@ -435,10 +435,10 @@ function plugins(options) {
 }
 
 // 其他全局配置
-function globalConfig(options) {
+function globalConfig(project) {
     return (/** @type {Context} */ context) => {
         context.when(
-            options.isEnvProduction,
+            project.isEnvProduction,
             (config) => {
                 config.devtool('source-map');
                 config.bail = true;

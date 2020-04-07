@@ -111,10 +111,7 @@ class InitTask extends Task {
             } else {
                 config.app.push(templateMeta);
             }
-            config.useTypeScript = !!templateJsonDev.useTypeScript;
-            if (templateJsonDev.useTypeScript) {
-                config.tsconfig = 'tsconfig.json';
-            }
+
             fs.writeJSONSync(path.resolve(this.projectDir, './eminem.json'), config, {
                 spaces: 4,
                 replacer: null

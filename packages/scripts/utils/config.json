@@ -9,6 +9,16 @@
         },
         "publicPath": {
             "type": "string"
+        },
+        "proxy": {
+            "anyOf": [
+                {
+                    "type": "string"
+                },
+                {
+                    "type": "object"
+                }
+            ]
         }
     },
     "additionalProperties": false

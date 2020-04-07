@@ -17,12 +17,12 @@
     "eminem.js"
   ],
   "dependencies": {
-    "chalk": "^3.0.0",
-    "commander": "^4.0.1",
-    "cross-env": "^6.0.3",
-    "cross-spawn": "^7.0.1",
-    "fs-extra": "^8.1.0",
-    "inquirer": "^7.0.0",
+    "chalk": "^4.0.0",
+    "commander": "^5.0.0",
+    "cross-env": "^7.0.2",
+    "cross-spawn": "^7.0.2",
+    "fs-extra": "^9.0.0",
+    "inquirer": "^7.1.0",
     "log-symbols": "^3.0.0",
     "validate-npm-package-name": "^3.0.0"
   },

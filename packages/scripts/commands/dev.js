@@ -74,6 +74,7 @@ choosePort(host, port).then((port) => {
         }
 
         console.log(chalk.greenBright('正在启动开发服务器......\n'));
+
         openBrowser(urls.localUrlForBrowser);
     });
 });
