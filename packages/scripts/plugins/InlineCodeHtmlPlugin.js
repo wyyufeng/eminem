@@ -7,7 +7,7 @@ const hash = (string) =>
         .update(string)
         .digest('hex');
 const hooks = {
-    pushCodeAssets: new tapable.AsyncSeriesWaterfallHook(['codeAssets'])
+    emitCodeAssets: new tapable.AsyncSeriesWaterfallHook(['codeAssets'])
 };
 class InlineCodeHtmlPlugin {
     constructor(htmlWebpackPlugin) {
@@ -15,7 +15,6 @@ class InlineCodeHtmlPlugin {
         this.codeAssets = {
             assetsMap: new Map(),
             push(...args) {
-                // console.log(args);
                 args.forEach((codeAsset) => {
                     if (typeof codeAsset.innerHTML === 'undefined') {
                         return;
@@ -27,7 +26,6 @@ class InlineCodeHtmlPlugin {
                         { 'data-hash': contenthash },
                         codeAsset.attributes
                     );
-                    // console.log(codeAsset);
                     this.assetsMap.set(contenthash, codeAsset);
                 });
             },
@@ -38,7 +36,7 @@ class InlineCodeHtmlPlugin {
     }
     apply(compiler) {
         compiler.hooks.compilation.tap('InlineCodeHtmlPlugin', (compilation) => {
-            hooks.pushCodeAssets.promise(this.codeAssets).then((codeAssets) => {
+            hooks.emitCodeAssets.promise(this.codeAssets).then((codeAssets) => {
                 const htmlhooks = this.htmlWebpackPlugin.getHooks(compilation);
                 htmlhooks.alterAssetTagGroups.tap('InlineCodeHtmlPlugin', (assets) => {
                     const assetsArr = Array.from(this.codeAssets.assetsMap.values());

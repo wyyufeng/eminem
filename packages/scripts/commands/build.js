@@ -15,6 +15,7 @@ const gzipSize = require('gzip-size');
 const flatten = require('array-flatten').flatten;
 const paths = require('../utils/paths');
 const version = require('../utils/version');
+const logger = require('../utils/logger');
 const createCompiler = require('../utils/createCompiler');
 const WARN_AFTER_BUNDLE_GZIP_SIZE = 250 * 1024; //kb
 let project;
@@ -51,7 +52,7 @@ function build() {
             `${chalk.redBright('删除build文件夹失败,请检查build文件夹是否被其他程序占用！')}`
         );
     }
-    console.log('正在构建...');
+    logger.info('正在构建...');
     copyPublicFolder();
     compiler.run((err, stats) => {
         if (err) {
@@ -63,7 +64,7 @@ function build() {
             return console.log(`${chalk.yellowBright('哪里出了点问题呀~~')}`);
         }
         printFileSize(buildDir);
-        console.log('构建完成！');
+        logger.info('构建完成！');
         fs.writeJSON(
             './stats.json',
             stats.toJson({
@@ -87,7 +88,7 @@ function printFileSize(dir) {
         return a;
     }, '');
     console.log();
-    console.log('文件经过Gzip压缩后大小为：');
+    console.log('构建结果经过Gzip压缩后大小为：');
     console.log();
     console.log(msg);
     console.log();

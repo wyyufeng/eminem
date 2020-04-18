@@ -1,5 +1,8 @@
 module.exports = {
-    webpackFinal: () => (/** @type {import('webpack-chain')} */ context) => {
-        return context;
+    webpackFinal: () => {
+        // do something
+        return (/** @type {import('webpack-chain')} */ context) => {
+            return context;
+        };
     }
 };

@@ -2,7 +2,9 @@ const Task = require('./Task');
 const fs = require('fs-extra');
 const path = require('path');
 const chalk = require('chalk');
-const { info, success, error, installPkg, warn } = require('./util');
+const { installPkg } = require('./util');
+const logger = require('./logger');
+
 class InitTask extends Task {
     constructor(name, template = 'em-template', useYarn, usecnpm) {
         super();
@@ -27,6 +29,9 @@ class InitTask extends Task {
         this.packageJson = {
             name: name,
             version: '0.0.0',
+            description: this.appName,
+            license: 'MIT',
+            repository: 'whatever',
             scripts: {
                 start: 'em-scripts dev',
                 build: 'em-scripts build',
@@ -36,7 +41,7 @@ class InitTask extends Task {
     }
 
     async createApp() {
-        info(`正在 ${chalk.cyan(this.projectDir)}下新建项目...`);
+        logger.info(`正在 ${chalk.cyan(this.projectDir)}下新建项目...`);
         const emrc = {
             name: this.appName,
             version: '0.0.0',
@@ -55,42 +60,39 @@ class InitTask extends Task {
             this.copyTemplate();
             this.getTemplateInfo()
                 .then(() => {
-                    success('项目创建完成!');
-                    warn(
-                        'em使用sharp(https://sharp.pixelplumbing.com/)来压缩优化图片，由于网络原因,请单独安装 npm install sharp '
-                    );
-                    console.log(`使用 ${chalk.cyan('cd ' + this.appName)}`);
+                    logger.success('项目创建完成!');
+                    console.log(`使用 ${chalk.cyan('cd ' + this.appName)} 切换至项目目录`);
                     console.log(`使用 ${chalk.cyan('npm start')}     启动项目`);
                     console.log(`使用 ${chalk.cyan('npm run build')} 构建项目`);
                 })
-                .catch(() => {
-                    error('嘤嘤嘤,项目创建失败了!');
+                .catch((err) => {
+                    logger.error('嘤嘤嘤,项目创建失败了!');
+                    console.log(err);
                 });
         });
     }
     install() {
-        info('正在安装依赖...');
         process.stdout.write('\n');
         process.chdir(this.projectDir);
 
         return new Promise((resolve, reject) => {
             installPkg(this.dependencies, this.useYarn, this.usecnpm)
                 .then(() => {
-                    success('依赖安装完成！');
+                    logger.success('依赖安装完成！');
                     resolve();
                 })
                 .catch(() => {
-                    error('依赖安装失败！');
+                    logger.error('依赖安装失败！');
                     reject();
                 });
         });
     }
     copyTemplate() {
-        info(`正在复制模板${chalk.cyan(this.template)}`);
+        logger.info(`正在复制模板${chalk.cyan(this.template)}`);
         if (fs.existsSync(this.templatePath)) {
             fs.copySync(this.templatePath, this.projectDir);
         } else {
-            error(
+            logger.error(
                 `抱歉，无法找到模板文件: ${chalk.red(this.templatePath)},请检查模板是否正常安装。`
             );
             return;
@@ -116,14 +118,14 @@ class InitTask extends Task {
                 spaces: 4,
                 replacer: null
             });
-            info('正在安装模板依赖...');
+            logger.info('正在安装模板依赖...');
             installPkg(templateDepsName, this.useYarn, this.usecnpm)
                 .then(() => {
-                    success('模板依赖安装完成');
+                    logger.success('模板依赖安装完成');
                     resolve();
                 })
                 .catch(() => {
-                    error('模板依赖安装失败');
+                    logger.error('模板依赖安装失败');
                     reject();
                 });
         });

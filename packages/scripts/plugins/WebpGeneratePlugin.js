@@ -7,7 +7,8 @@ const findCacheDir = require('find-cache-dir');
 const fs = require('fs-extra');
 const postcss = require('postcss');
 const isCss = (filename) => path.extname(filename) === '.css';
-
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const InlineCodePlugin = require('../plugins/InlineCodeHtmlPlugin');
 const webpRuntime = (clsPrefix) => `
 window.WEBP_SUPPORT = (function canUseWebP() {
     var flag = false;
@@ -46,56 +47,89 @@ const defaultProps = {
 };
 
 module.exports = class WebpGeneratePlugin {
-    constructor(inlineCodePlugin, htmlWebpackPlugin, options = defaultProps) {
+    constructor(options = defaultProps) {
         this.options = options;
-        this.inlineCodePlugin = inlineCodePlugin;
-        this.htmlWebpackPlugin = htmlWebpackPlugin;
+
         this.cacheThunk = findCacheDir({ name: 'webp', create: true, thunk: true });
     }
-
+    /**
+     * 生成webp
+     * @param {Array} imgAssets 图片资源
+     * @param {any} compilation
+     */
     async generateWebp(imgAssets, compilation) {
         const jobs = imgAssets.map((asset) => {
             return new Promise((resolve, reject) => {
                 this.cacheWebp(
                     asset.asset.source(),
-                    (buf) => {
-                        const source = new RawSource(buf);
+                    (result) => {
+                        if (Buffer.isBuffer(result)) {
+                            const source = new RawSource(buf);
 
-                        compilation.assets[`${asset.filename}${this.options.webpSuffix}`] = source;
-                        resolve();
+                            compilation.assets[
+                                `${asset.filename}${this.options.webpSuffix}`
+                            ] = source;
+                            resolve();
+                        } else {
+                            sharp(asset.asset.source())
+                                .webp()
+                                .toBuffer()
+                                .then((data) => {
+                                    const source = new RawSource(data);
+                                    fs.writeFileSync(cacheFilePath, data);
+                                    compilation.assets[
+                                        `${asset.filename}${this.options.webpSuffix}`
+                                    ] = source;
+                                    resolve();
+                                })
+                                .catch((err) => {
+                                    reject(err);
+                                });
+                        }
                     },
-                    (cacheFilePath) => {
-                        sharp(asset.asset.source())
-                            .webp()
-                            .toBuffer()
-                            .then((data) => {
-                                const source = new RawSource(data);
-                                fs.writeFileSync(cacheFilePath, data);
-                                compilation.assets[
-                                    `${asset.filename}${this.options.webpSuffix}`
-                                ] = source;
-                                resolve();
-                            })
-                            .catch((err) => {
-                                reject(err);
-                            });
-                    }
+                    reject
                 );
             });
         });
         await Promise.all(jobs);
     }
-
-    cacheWebp(content, hitFunc, missFunc) {
+    /**
+     * 缓存生成的webp文件
+     * @param {*} content
+     * @param {Function} resolve 命中缓存时的回调函数
+     * @param {Function} reject 未命中缓存时的回调函数
+     */
+    cacheWebp(content, resolve, reject) {
         const hash = crypto.createHash('sha1').update(content).digest('hex');
         const cacheFilePath = this.cacheThunk(hash);
-        if (fs.existsSync(cacheFilePath)) {
-            return hitFunc(fs.readFileSync(cacheFilePath));
-        } else {
-            missFunc(cacheFilePath);
-        }
+        fs.exists(cacheFilePath)
+            .then((exists) => {
+                if (exists) {
+                    fs.readFile(cacheFilePath)
+                        .then((data) => {
+                            resolve(data);
+                        })
+                        .catch((err) => {
+                            reject(err);
+                        });
+                } else {
+                    resolve(cacheFilePath);
+                }
+            })
+            .catch((err) => {
+                reject(err);
+            });
+        // if (fs.existsSync(cacheFilePath)) {
+        //     return hitFunc(fs.readFileSync(cacheFilePath));
+        // } else {
+        //     missFunc(cacheFilePath);
+        // }
     }
-
+    /**
+     * 使用postcss 生成 webp的css 兼容代码
+     * @param {*} compilation
+     * @param {*} chunks
+     */
     async generateCSSSupport(compilation, chunks) {
         const filename = compilation.getPath(this.options.filename);
         const map = new Map();
@@ -124,9 +158,12 @@ module.exports = class WebpGeneratePlugin {
         }
         return map;
     }
-
+    /**
+     *
+     * @param {*} compiler
+     */
     generateWebpRuntime(compiler) {
-        this.inlineCodePlugin.hooks.pushCodeAssets.tap('WebpGeneratePlugin', (codeAssets) => {
+        InlineCodePlugin.hooks.emitCodeAssets.tap('WebpGeneratePlugin', (codeAssets) => {
             codeAssets.push({
                 tagName: 'script',
                 innerHTML: webpRuntime(this.options.clsPrefix),
@@ -143,7 +180,7 @@ module.exports = class WebpGeneratePlugin {
                             map.forEach((rawSource, key) => {
                                 compilation.assets[key] = rawSource;
                                 if (this.options.mode === 'single') {
-                                    const hooks = this.htmlWebpackPlugin.getHooks(compilation);
+                                    const hooks = HtmlWebpackPlugin.getHooks(compilation);
                                     hooks.alterAssetTagGroups.tap(
                                         'InlineChunkHtmlPlugin',
                                         (assets) => {

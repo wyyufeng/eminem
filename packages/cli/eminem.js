@@ -7,7 +7,7 @@ const chalk = require('chalk');
 const fs = require('fs-extra');
 const inquirer = require('inquirer');
 const InitTask = require('./tasks/Init');
-const { info, error } = require('./tasks/util');
+const { info, error } = require('./tasks/logger');
 process.on('unhandledRejection', (err) => {
     throw err;
 });

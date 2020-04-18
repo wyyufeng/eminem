@@ -153,7 +153,7 @@ function cssLoader(project) {
                     config
                         .use('mini-css')
                         .loader(MiniCssExtractPlugin.loader)
-                        .project({
+                        .options({
                             publicPath: '../'
                         })
                         .end();
@@ -202,7 +202,7 @@ function sassLoader(project) {
             .when(
                 project.isEnvProduction,
                 (config) => {
-                    config.use('mini-css').loader(MiniCssExtractPlugin.loader).project({
+                    config.use('mini-css').loader(MiniCssExtractPlugin.loader).options({
                         publicPath: '../'
                     });
                 },
@@ -383,15 +383,6 @@ function plugins(project) {
             .plugin('EnvScriptHtmlPlugin')
             .use(EnvScriptHtmlPlugin, [HtmlWebpackPlugin])
             .end()
-            .when(project.isEnvProduction, (config) => {
-                config
-                    .plugin('WebpGeneratePlugin')
-                    .use(require('../plugins/WebpGeneratePlugin'), [
-                        InlineCodeHtmlPlugin,
-                        HtmlWebpackPlugin
-                    ])
-                    .end();
-            })
             .when(fs.emptyDirSync(paths.copyFilePath), (config) => {
                 config
                     .plugin('CopyPlugin')
