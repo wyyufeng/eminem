@@ -64,7 +64,7 @@ module.exports = class WebpGeneratePlugin {
                     asset.asset.source(),
                     (result) => {
                         if (Buffer.isBuffer(result)) {
-                            const source = new RawSource(buf);
+                            const source = new RawSource(result);
 
                             compilation.assets[
                                 `${asset.filename}${this.options.webpSuffix}`
@@ -76,7 +76,7 @@ module.exports = class WebpGeneratePlugin {
                                 .toBuffer()
                                 .then((data) => {
                                     const source = new RawSource(data);
-                                    fs.writeFileSync(cacheFilePath, data);
+                                    fs.writeFileSync(result, data);
                                     compilation.assets[
                                         `${asset.filename}${this.options.webpSuffix}`
                                     ] = source;
@@ -119,11 +119,6 @@ module.exports = class WebpGeneratePlugin {
             .catch((err) => {
                 reject(err);
             });
-        // if (fs.existsSync(cacheFilePath)) {
-        //     return hitFunc(fs.readFileSync(cacheFilePath));
-        // } else {
-        //     missFunc(cacheFilePath);
-        // }
     }
     /**
      * 使用postcss 生成 webp的css 兼容代码
@@ -136,7 +131,6 @@ module.exports = class WebpGeneratePlugin {
 
         for (const chunk of chunks) {
             const cssFiles = chunk.files.filter(isCss);
-
             for (const chunkFilename of cssFiles) {
                 const asset = compilation.assets[chunkFilename];
                 const result = await postcss([
@@ -171,7 +165,8 @@ module.exports = class WebpGeneratePlugin {
                 _webpRuntime: true
             });
         });
-        compiler.hooks.afterCompile.tap('WebpGeneratePlugin', (compilation) => {
+
+        compiler.hooks.compilation.tap('WebpGeneratePlugin', (compilation) => {
             compilation.hooks.optimizeChunkAssets.tapAsync(
                 'WebpGeneratePlugin',
                 (chunks, callback) => {
@@ -211,34 +206,31 @@ module.exports = class WebpGeneratePlugin {
 
     apply(compiler) {
         this.generateWebpRuntime(compiler);
-        compiler.hooks.afterCompile.tapAsync(
-            'WebpGeneratePlugin',
-            async (compilation, callback) => {
-                try {
-                    const keys = Object.keys(compilation.assets);
 
-                    const imgAssets = keys
-                        .map((key) => {
-                            const ext = path.extname(key);
-                            if (this.options.test.some((exp) => exp.test(ext))) {
-                                const asset = compilation.assets[key];
-                                const size = asset.size();
-                                if (size > this.options.limit) {
-                                    return {
-                                        filename: key,
-                                        asset
-                                    };
-                                }
+        compiler.hooks.afterCompile.tapAsync('generateWebp', async (compilation, callback) => {
+            try {
+                const keys = Object.keys(compilation.assets);
+
+                const imgAssets = keys
+                    .map((key) => {
+                        const ext = path.extname(key);
+                        if (this.options.test.some((exp) => exp.test(ext))) {
+                            const asset = compilation.assets[key];
+                            const size = asset.size();
+                            if (size > this.options.limit) {
+                                return {
+                                    filename: key,
+                                    asset
+                                };
                             }
-                        })
-                        .filter(Boolean);
-                    await this.generateWebp(imgAssets, compilation);
-
-                    callback();
-                } catch (error) {
-                    callback(error);
-                }
+                        }
+                    })
+                    .filter(Boolean);
+                await this.generateWebp(imgAssets, compilation);
+                callback();
+            } catch (error) {
+                callback(error);
             }
-        );
+        });
     }
 };

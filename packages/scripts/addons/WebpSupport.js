@@ -2,7 +2,7 @@ const logger = require('../utils/logger');
 const chalk = require('chalk');
 function webpsupport(project) {
     logger.warn(
-        `该插件使用sharp [https://sharp.pixelplumbing.com/] 来转换webp，由于某些原因,请单独安装该模块: ${chalk.greenBright(
+        `webpsupport 插件使用sharp https://sharp.pixelplumbing.com/ 来转换webp，由于某些原因,安装该模块可能会出现异常,请自行单独安装该模块: ${chalk.greenBright(
             'npm install sharp --unsafe-perm'
         )}`
     );
