@@ -60,7 +60,6 @@
     "sass-loader": "^8.0.2",
     "schema-utils": "^2.6.5",
     "semver": "^7.3.2",
-    "sharp": "^0.25.2",
     "source-map-resolve": "^0.6.0",
     "style-loader": "^1.1.4",
     "terser-webpack-plugin": "^2.3.5",
@@ -71,10 +70,8 @@
     "webpack-cli": "^3.3.11",
     "webpack-dev-server": "^3.10.3",
     "webpack-manifest-plugin": "^2.2.0",
-    "webpack-sources": "^1.4.3"
-  },
-  "gitHead": "2416ce9f6e002f56893a5c98446ca4cb6beb2a22",
-  "devDependencies": {
+    "webpack-sources": "^1.4.3",
     "fork-ts-checker-webpack-plugin": "^4.1.3"
-  }
+  },
+  "gitHead": "2416ce9f6e002f56893a5c98446ca4cb6beb2a22"
 }
