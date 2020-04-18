@@ -8,7 +8,7 @@ function installPkg(deps = [], useYarn = false, usecnpm = false) {
             args.push('install', '--save-dev');
         }
         if (command === 'yarn') {
-            args.push('add --dev');
+            args.push('add', '--dev');
         }
         args.push(...deps);
         usecnpm && args.push('--registry', 'https://registry.npm.taobao.org');
