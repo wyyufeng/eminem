@@ -1,0 +1,5 @@
+{
+    "dependencies": {
+        "eslint-config-alloy": "^3.5.0"
+    }
+}

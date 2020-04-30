@@ -1,0 +1,16 @@
+{
+  "name": "@eminemjs/template",
+  "version": "0.0.1",
+  "description": "em-template",
+  "author": "wyyufeng <wyyufeng@gmail.com>",
+  "homepage": "",
+  "license": "MIT",
+  "files": [
+    "template",
+    "template.json"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "gitHead": "502d402d5e64ac660fd1dc2f7d8d42c2bf46ae60"
+}

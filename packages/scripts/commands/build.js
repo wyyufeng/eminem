@@ -1,81 +1,55 @@
 process.env.BABEL_ENV = 'production';
 process.env.NODE_ENV = 'production';
+const chalk = require('chalk');
+const fs = require('fs-extra');
+const path = require('path');
+const flatten = require('array-flatten').flatten;
+const filesize = require('filesize');
+const gzipSize = require('gzip-size');
+const WARN_AFTER_BUNDLE_SIZE = 250 * 1024; //kb
+
 process.on('unhandledRejection', (err) => {
     throw err;
 });
-require('../config/env');
-
-const { base, prod } = require('../config');
-const context = require('../config/context');
-const filesize = require('filesize');
-const fs = require('fs-extra');
-const path = require('path');
-const chalk = require('chalk');
-const gzipSize = require('gzip-size');
-const flatten = require('array-flatten').flatten;
-const paths = require('../utils/paths');
-const version = require('../utils/version');
-const logger = require('../utils/logger');
-const createCompiler = require('../utils/createCompiler');
-const WARN_AFTER_BUNDLE_GZIP_SIZE = 250 * 1024; //kb
-let project;
-try {
-    project = fs.readJSONSync(paths.resolveApp('eminem.json'));
-} catch (error) {
-    console.log();
-    console.error('嘤嘤嘤~~当前不是eminem的工作目录！');
-    process.exit(1);
+const { WebpackFinalConfig } = require('@eminemjs/core');
+const createCompiler = require('../util/createCompiler');
+const options = {};
+function setupOptions() {
+    options.isEnvProduction = true;
+    options.isEnvDevelopment = false;
 }
-
-function setup() {
-    version.inc();
-    project.version = version.current();
-    project.isEnvProduction = true;
-    project.isEnvDevelopment = false;
-    project.appPath = paths.appPath;
-    project.appSrc = paths.appSrc;
-    project.appBuild = paths.appBuild;
-    project.appBuildFileName = paths.appBuildFileName;
-}
-setup();
-build();
+setupOptions();
 
 function build() {
-    let compiler = createCompiler(Object.assign(base, prod), project, context);
-    const buildDir = paths.appBuild;
-
-    try {
-        fs.emptyDirSync(buildDir);
-    } catch (e) {
-        console.log(e);
-        console.log(
-            `${chalk.redBright('删除build文件夹失败,请检查build文件夹是否被其他程序占用！')}`
-        );
-    }
-    logger.info('正在构建...');
-    copyPublicFolder();
+    const webpackFinalCompiler = new WebpackFinalConfig(options);
+    const finalConfig = webpackFinalCompiler.toWebpack();
+    const compiler = createCompiler(finalConfig);
     compiler.run((err, stats) => {
         if (err) {
-            console.log(`嘤嘤嘤~ 构建失败！`);
+            console.log(`build failed...(T＿T)`);
             console.log(err);
             process.exit(1);
         }
         if (stats.hasErrors()) {
-            return console.log(`${chalk.yellowBright('哪里出了点问题呀~~')}`);
+            return console.log(`${chalk.yellowBright("There's something wrong~~")}`);
         }
-        printFileSize(buildDir);
-        logger.info('构建完成！');
+        printFileSize(webpackFinalCompiler.context.paths.appOutput);
+        console.log('build complete！(oﾟ▽ﾟ)o  ');
         fs.writeJSON(
             './stats.json',
             stats.toJson({
                 source: false
-            })
+            }),
+            {
+                spaces: 4,
+                replacer: null
+            }
         );
-        console.log(
-            `您可以通过命令 ${chalk.blueBright('npx serve build')} 启动静态服务查看构建结果！`
-        );
+        console.log(`You can view the result with:  ${chalk.blueBright('npx serve build')}`);
     });
 }
+
+build();
 
 function printFileSize(dir) {
     const fileSizes = measureFileSize(dir);
@@ -88,27 +62,29 @@ function printFileSize(dir) {
         return a;
     }, '');
     console.log();
-    console.log('构建结果经过Gzip压缩后大小为：');
+    console.log('The assets size after gzip ：');
     console.log();
     console.log(msg);
     console.log();
     const warnChunks = result.filter(
-        (file) => file.size > WARN_AFTER_BUNDLE_GZIP_SIZE && path.extname(file.file) !== '.map'
+        (file) => file.size > WARN_AFTER_BUNDLE_SIZE && path.extname(file.file) !== '.map'
     );
     if (warnChunks.length > 0) {
         console.log(
             chalk.yellowBright(
-                `以下资源过大(>${filesize(WARN_AFTER_BUNDLE_GZIP_SIZE)}),可能会影响网站性能：`
+                `The following asset(s) exceed the recommended size limit(>${filesize(
+                    WARN_AFTER_BUNDLE_SIZE
+                )}).This can impact web performance.`
             )
         );
         console.log();
         warnChunks.forEach((i) => {
             console.log(`${chalk.yellowBright(i.file)}(${chalk.redBright(filesize(i.size))}) \n`);
         });
-        console.log(`${chalk.yellowBright('建议对其优化！')} \n`);
         console.log('\n');
     }
 }
+
 function measureFileSize(file) {
     const fileStats = fs.statSync(file);
     if (fileStats.isDirectory()) {
@@ -118,7 +94,7 @@ function measureFileSize(file) {
                 return measureFileSize(path.resolve(file, f));
             } else {
                 return {
-                    file: path.resolve(file, f).split(paths.appBuildFileName)[1],
+                    file: f,
                     size: gzipSize.fileSync(path.resolve(file, f))
                 };
             }
@@ -130,14 +106,3 @@ function measureFileSize(file) {
         };
     }
 }
-
-function copyPublicFolder() {
-    const appsAbsolutePath = paths.appsAbsolutePath;
-    const htmlPaths = Object.keys(appsAbsolutePath).map((key) => appsAbsolutePath[key].html);
-    fs.copySync(paths.appPublic, paths.appBuild, {
-        dereference: true,
-        filter: (file) => !htmlPaths.includes(file)
-    });
-}
-
-module.exports = build;

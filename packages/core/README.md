@@ -1,11 +1,11 @@
-# `scripts`
+# `core`
 
 > TODO: description
 
 ## Usage
 
 ```
-const scripts = require('scripts');
+const core = require('core');
 
 // TODO: DEMONSTRATE API
 ```
