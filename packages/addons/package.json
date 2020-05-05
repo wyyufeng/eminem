@@ -1,6 +1,6 @@
 {
   "name": "@eminemjs/addons",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "> TODO: description",
   "author": "wyyufeng <wyyufeng@gmail.com>",
   "homepage": "https://github.com/wyyufeng/eminem#readme",
@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@babel/core": "^7.9.0",
-    "@eminemjs/babel-preset": "^0.1.0",
+    "@eminemjs/babel-preset": "^0.2.0",
     "babel-loader": "^8.1.0",
     "babel-preset-react-app": "^9.1.2",
     "case-sensitive-paths-webpack-plugin": "^2.3.0",
