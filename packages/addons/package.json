@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@babel/core": "^7.9.0",
+    "@eminemjs/babel-preset": "^0.1.0",
     "babel-loader": "^8.1.0",
     "babel-preset-react-app": "^9.1.2",
     "case-sensitive-paths-webpack-plugin": "^2.3.0",
@@ -56,5 +57,6 @@
     "eslint": "^7.0.0",
     "webpack": "^4.43.0",
     "webpack-dev-server": "^3.10.3"
-  }
+  },
+  "gitHead": "bf4c5e60bb3d37d057fb85bc58dbfefbceba2546"
 }

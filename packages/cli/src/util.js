@@ -5,12 +5,11 @@ function installPkg(deps = [], useYarn = false, usecnpm = false) {
     return new Promise((resolve, reject) => {
         const args = [];
         if (command === 'npm') {
-            args.push('install', ...deps, '--save-dev');
+            args.push('install', ...deps, '--save-dev', '--no-optional');
         }
         if (command === 'yarn') {
-            args.push('add', ...deps, '--dev');
+            args.push('add', ...deps, '--dev', '--ignore-optional');
         }
-        // args.push(...deps);
         usecnpm && args.push('--registry', 'https://registry.npm.taobao.org');
         logger.info(`正在使用${command}安装依赖...`);
         spawn(command, [...args], {

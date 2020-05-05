@@ -26,5 +26,6 @@
     "dotenv-expand": "^5.1.0",
     "schema-utils": "^2.6.6",
     "webpack-chain": "^6.4.0"
-  }
+  },
+  "gitHead": "bf4c5e60bb3d37d057fb85bc58dbfefbceba2546"
 }

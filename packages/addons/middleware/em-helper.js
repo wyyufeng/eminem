@@ -16,7 +16,11 @@ module.exports = (lineChunk) => (context) => {
         .use(require.resolve('react-dev-utils/ModuleNotFoundPlugin'), [context.paths.appSource])
         .end()
         .plugin('CaseSensitivePathsPlugin')
-        .use(require.resolve('case-sensitive-paths-webpack-plugin'));
+        .use(require.resolve('case-sensitive-paths-webpack-plugin'))
+        .end()
+        .plugin('EnvScriptHtmlPlugin')
+        .use(require.resolve('../internal/EnvScriptHtmlPlugin.js'), [HtmlWebpackPlugin])
+        .end();
 
     return context;
 };

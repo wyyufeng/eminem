@@ -13,7 +13,7 @@ class InitTask extends Task {
         this.useYarn = useYarn;
         this.usecnpm = usecnpm;
         this.projectDir = path.resolve(path.resolve(process.cwd(), name));
-        this.dependencies = [template];
+        this.dependencies = [template, '@eminemjs/addons'];
         this.templatePath = path.resolve(
             this.projectDir,
             './node_modules',

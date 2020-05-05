@@ -40,5 +40,6 @@
     "gzip-size": "^5.1.1",
     "webpack": "^4.43.0",
     "webpack-dev-server": "^3.10.3"
-  }
+  },
+  "gitHead": "bf4c5e60bb3d37d057fb85bc58dbfefbceba2546"
 }

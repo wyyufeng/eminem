@@ -85,7 +85,7 @@ const defaultOptions = {
             }
         };
     },
-    lineChunk: [/runtime-.+[.]js/],
+    inlineChunk: [/runtime-.+[.]js/],
     file: {
         name: 'static/[name].[ext]'
     },
@@ -106,7 +106,33 @@ const defaultOptions = {
     overlay: true
 };
 
-module.exports = (opts = {}) => (context) => {
+/**
+ * @description web-preset 配置
+ * @param {Object} opts
+ * @param {String} opts.publicPath - 参考webpack/output
+ * @param {Object} opts.babel - 参考babel-loader
+ * @param {String} opts.babel.language  - 'javascript|javascriptreact|typescript'
+ * @param {Object} opts.output
+ * @param {Function} opts.output.filename
+ * @param {Function} opts.output.chunkFilename
+ * @param {Object} opts.style
+ * @param {String} opts.style.publicPath
+ * @param {Object} opts.style.postcss
+ * @param {Function} opts.style.filename
+ * @param {Function} opts.style.chunkFilename
+ * @param {Object} opts.eslint
+ * @param {String} opts.eslint.language  - 'javascript|javascriptreact|typescript'
+ * @param {Object} opts.html -参考html-webpack-plugin
+ * @param {Object} opts.image
+ * @param {Number} opts.image.limit
+ * @param {Function} opts.image.name
+ * @param {Array} opts.inlineChunk
+ * @param {Object} opts.file
+ * @param {String} opts.file.name
+ * @param {Array} opts.ignore
+ * @param {Object} opts.devServer -参考webpack/devserver
+ */
+const web = (opts = {}) => (context) => {
     const webOptions = merge(defaultOptions, opts);
     const {
         publicPath,
@@ -115,7 +141,7 @@ module.exports = (opts = {}) => (context) => {
         html,
         eslint,
         manifest,
-        lineChunk,
+        inlineChunk,
         file,
         ignore,
         print,
@@ -144,7 +170,7 @@ module.exports = (opts = {}) => (context) => {
         eslint && eslintPipe(eslint),
         imagePipe(image),
         manifestPipe(manifest(context)),
-        helper(lineChunk),
+        helper(inlineChunk),
         filePipe(file),
         ignorePipe(ignore),
         !isEnvProduction && hotreload(),
@@ -163,3 +189,5 @@ module.exports = (opts = {}) => (context) => {
 
     return context;
 };
+
+module.exports = web;
