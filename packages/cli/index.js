@@ -56,6 +56,13 @@ async function checkProjectDir(isCurrentDir, projectDir) {
                     message: `是否在当前目录下创建项目?`
                 }
             ]);
+            if (ok) {
+                const existsFiles = fs.readdirSync(path.resolve(process.cwd()));
+                if (existsFiles.length > 0) {
+                    info('当前文件夹有其他文件，请先清空该文件夹！');
+                    return process.exit(1);
+                }
+            }
             if (!ok) {
                 info('告辞！');
                 return process.exit(1);

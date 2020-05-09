@@ -19,8 +19,7 @@ module.exports = (lineChunk) => (context) => {
         .use(require.resolve('case-sensitive-paths-webpack-plugin'))
         .end()
         .plugin('EnvScriptHtmlPlugin')
-        .use(require('../internal/EnvScriptHtmlPlugin.js'), [HtmlWebpackPlugin])
+        .use(require('../internal/EnvScriptHtmlPlugin'), [HtmlWebpackPlugin])
         .end();
-
     return context;
 };

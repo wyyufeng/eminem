@@ -8,7 +8,8 @@
   "files": [
     "middleware",
     "presets",
-    "util"
+    "util",
+    "internal"
   ],
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
