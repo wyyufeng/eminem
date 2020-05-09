@@ -7,7 +7,7 @@ const chalk = require('chalk');
 const fs = require('fs-extra');
 const inquirer = require('inquirer');
 const InitTask = require('./src/Init');
-const { info, error } = require('./src/logger');
+const { info, error, warn } = require('./src/logger');
 process.on('unhandledRejection', (err) => {
     throw err;
 });
@@ -59,8 +59,8 @@ async function checkProjectDir(isCurrentDir, projectDir) {
             if (ok) {
                 const existsFiles = fs.readdirSync(path.resolve(process.cwd()));
                 if (existsFiles.length > 0) {
-                    info('当前目录不为空，请先清空该目录！');
-                    return process.exit(1);
+                    warn('当前目录不为空！');
+                    // return process.exit(1);
                 }
             }
             if (!ok) {
