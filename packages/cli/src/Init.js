@@ -6,13 +6,15 @@ const { installPkg } = require('./util');
 const logger = require('./logger');
 
 class InitTask extends Task {
-    constructor(name, template = 'em-template', useYarn, usecnpm) {
+    constructor(name, isCurrentDir, template = '@eminemjs/template', useYarn = true, usecnpm) {
         super();
         this.template = template;
         this.appName = name;
         this.useYarn = useYarn;
         this.usecnpm = usecnpm;
-        this.projectDir = path.resolve(path.resolve(process.cwd(), name));
+        this.projectDir = isCurrentDir
+            ? path.resolve(process.cwd())
+            : path.resolve(path.resolve(process.cwd(), name));
         this.dependencies = [template, '@eminemjs/addons'];
         this.templatePath = path.resolve(
             this.projectDir,

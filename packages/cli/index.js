@@ -28,7 +28,7 @@ program
         projectName = result;
         const { template, useYarn, usecnpm } = options;
         checkProjectDir(isCurrentDir, projectDir).then(() => {
-            new InitTask(projectName, template, useYarn, usecnpm).createApp();
+            new InitTask(projectName, isCurrentDir, template, useYarn, usecnpm).createApp();
         });
     });
 
