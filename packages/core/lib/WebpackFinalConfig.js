@@ -8,14 +8,14 @@ const resolvePath = (relativePath) => {
 
 const isFunction = (source) => typeof source === 'function';
 class WebpackFinalConfig {
-    constructor(envVars) {
+    constructor(otherOpts = {}) {
         this.configPath = resolvePath('.emrc.js');
         const userConfig = require(this.configPath);
 
         this.config = require(this.configPath);
         this.config.shouldUseSourceMap = userConfig.sourceMap;
         this.middlewareMap = new Map();
-        this.context = new Context({ ...this.config, ...envVars });
+        this.context = new Context({ ...this.config, ...otherOpts });
     }
     computeFinalContext() {
         const { use } = this.config;

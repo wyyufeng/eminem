@@ -6,6 +6,7 @@ const path = require('path');
 const flatten = require('array-flatten').flatten;
 const filesize = require('filesize');
 const gzipSize = require('gzip-size');
+const version = require('../util/version');
 const WARN_AFTER_BUNDLE_SIZE = 250 * 1024; //kb
 
 process.on('unhandledRejection', (err) => {
@@ -17,6 +18,7 @@ const options = {};
 function setupOptions() {
     options.isEnvProduction = true;
     options.isEnvDevelopment = false;
+    options.version = version.nextVersion();
 }
 setupOptions();
 
@@ -34,7 +36,9 @@ function build() {
             return console.log(`${chalk.yellowBright("There's something wrong~~")}`);
         }
         printFileSize(webpackFinalCompiler.context.paths.appOutput);
+        version.incBuildVersion();
         console.log('build complete！(oﾟ▽ﾟ)o  ');
+
         fs.writeJSON(
             './stats.json',
             stats.toJson({
