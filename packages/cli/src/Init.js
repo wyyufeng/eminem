@@ -8,6 +8,7 @@ const logger = require('./logger');
 class InitTask extends Task {
     constructor(name, isCurrentDir, template = '@eminemjs/template', useYarn = true, usecnpm) {
         super();
+        this.isCurrentDir = isCurrentDir;
         this.template = template;
         this.appName = name;
         this.useYarn = useYarn;
@@ -54,7 +55,8 @@ class InitTask extends Task {
             this.getTemplateInfo()
                 .then(() => {
                     logger.success('项目创建完成!');
-                    console.log(`使用 ${chalk.cyan('cd ' + this.appName)} 切换至项目目录`);
+                    !this.isCurrentDir &&
+                        console.log(`使用 ${chalk.cyan('cd ' + this.appName)} 切换至项目目录`);
                     console.log(`使用 ${chalk.cyan('npm start')}     启动项目`);
                     console.log(`使用 ${chalk.cyan('npm run build')} 构建项目`);
                 })
