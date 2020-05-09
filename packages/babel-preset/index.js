@@ -10,12 +10,9 @@ module.exports = (_, opts = { react: false }) => {
             [
                 '@babel/preset-env',
                 {
-                    targets: {
-                        node: 'current',
-                        useBuiltIns: 'usage',
-                        corejs: 3,
-                        modules: false
-                    }
+                    useBuiltIns: 'usage',
+                    corejs: 3,
+                    modules: false
                 }
             ],
             react && [
