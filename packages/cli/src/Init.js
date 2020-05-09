@@ -6,7 +6,7 @@ const { installPkg } = require('./util');
 const logger = require('./logger');
 
 class InitTask extends Task {
-    constructor(name, isCurrentDir, template = '@eminemjs/template', useYarn = true, usecnpm) {
+    constructor(name, isCurrentDir, template = '@eminemjs/template', useYarn, usecnpm) {
         super();
         this.isCurrentDir = isCurrentDir;
         this.template = template;

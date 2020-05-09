@@ -1,4 +1,4 @@
-const pipe = ({ publicPath, filename, chunkFilename }) => (context) => {
+module.exports = ({ publicPath, filename, chunkFilename }) => (context) => {
     context.output
         .path(context.options.isEnvProduction ? context.paths.appOutput : undefined)
         .filename(filename(context.NODE_ENV))
@@ -8,5 +8,3 @@ const pipe = ({ publicPath, filename, chunkFilename }) => (context) => {
         .end();
     return context;
 };
-
-module.exports = pipe;

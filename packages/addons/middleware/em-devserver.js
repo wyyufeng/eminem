@@ -1,4 +1,4 @@
-const f = ({ publicPath, proxy }) => (context) => {
+module.exports = ({ publicPath, proxy }) => (context) => {
     context.devServer
         .set('transportMode', 'ws')
         .set('injectClient', false)
@@ -10,7 +10,7 @@ const f = ({ publicPath, proxy }) => (context) => {
         .compress(true)
         .clientLogLevel('none')
         .contentBase(context.paths.appPublic)
-        .publicPath(publicPath)
+        .publicPath('/')
         .watchContentBase(true)
         .hot(true)
         .host(context.options.host)
@@ -26,5 +26,3 @@ const f = ({ publicPath, proxy }) => (context) => {
 
     return context;
 };
-
-module.exports = f;

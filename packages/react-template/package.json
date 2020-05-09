@@ -1,0 +1,16 @@
+{
+  "name": "@eminemjs/react-template",
+  "version": "0.2.4",
+  "description": "em-template",
+  "author": "wyyufeng <wyyufeng@gmail.com>",
+  "homepage": "",
+  "license": "MIT",
+  "files": [
+    "template",
+    "template.json"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "gitHead": "bf4c5e60bb3d37d057fb85bc58dbfefbceba2546"
+}

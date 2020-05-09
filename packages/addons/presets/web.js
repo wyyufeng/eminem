@@ -15,7 +15,7 @@ const message = require('../middleware/em-print');
 const env = require('../middleware/em-env');
 const devtoolPipe = require('../middleware/em-devtool');
 const other = require('../middleware/em-other');
-const devServer = require('../middleware/em-devserver');
+const devServerAddon = require('../middleware/em-devserver');
 const cssminimizer = require('../middleware/em-cssminimizer');
 const jsminimizer = require('../middleware/em-jsminimizer');
 const cleanPipe = require('../middleware/em-clean');
@@ -159,7 +159,8 @@ const web = (opts = {}) => {
             print,
             devtool,
             image,
-            clean
+            clean,
+            devServer
         } = webOptions;
         const { filename, chunkFilename } = webOptions.output;
         const { isEnvProduction, apps } = context.options;
@@ -192,7 +193,7 @@ const web = (opts = {}) => {
             clean && cleanPipe(clean),
             devtoolPipe(devtool),
             other(),
-            !isEnvProduction && devServer(devServer),
+            !isEnvProduction && devServerAddon(devServer),
             isEnvProduction && jsminimizer(),
             isEnvProduction && cssminimizer(),
             isEnvProduction && splitChunks(),
