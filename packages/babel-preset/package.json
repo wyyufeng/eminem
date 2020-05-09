@@ -1,6 +1,6 @@
 {
   "name": "@eminemjs/babel-preset",
-  "version": "0.2.4",
+  "version": "0.2.6",
   "description": "babel preset for eminemjs",
   "author": "wyyufeng <wyyufeng@gmail.com>",
   "homepage": "https://github.com/wyyufeng/eminem#readme",
