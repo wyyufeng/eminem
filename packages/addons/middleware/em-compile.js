@@ -13,10 +13,12 @@ function compile({ language, ...others }) {
                 cacheCompression: false,
                 compact: context.options.isEnvProduction,
                 presets: [
-                    require.resolve('@eminemjs/babel-preset'),
-                    {
-                        react: language === 'javascriptreact'
-                    }
+                    [
+                        require.resolve('@eminemjs/babel-preset'),
+                        {
+                            react: language === 'javascriptreact'
+                        }
+                    ]
                 ],
                 ...others
             });
