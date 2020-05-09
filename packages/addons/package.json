@@ -28,6 +28,7 @@
     "babel-loader": "^8.1.0",
     "babel-preset-react-app": "^9.1.2",
     "case-sensitive-paths-webpack-plugin": "^2.3.0",
+    "cheerio": "^1.0.0-rc.3",
     "clean-webpack-plugin": "^3.0.0",
     "copy-webpack-plugin": "^5.1.1",
     "css-loader": "^3.5.3",

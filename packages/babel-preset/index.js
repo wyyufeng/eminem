@@ -51,6 +51,6 @@ module.exports = (_, opts = { react: false }) => {
                         removeImport: true
                     }
                 ]
-        ]
+        ].filter(Boolean)
     };
 };
