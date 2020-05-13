@@ -10,7 +10,7 @@ module.exports = ({ publicPath, proxy }) => (context) => {
         .compress(true)
         .clientLogLevel('none')
         .contentBase(context.paths.appPublic)
-        .publicPath('/')
+        .publicPath(publicPath)
         .watchContentBase(true)
         .hot(true)
         .host(context.options.host)

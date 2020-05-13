@@ -1,6 +1,6 @@
 {
   "name": "@eminemjs/babel-preset",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "babel preset for eminemjs",
   "author": "wyyufeng <wyyufeng@gmail.com>",
   "homepage": "https://github.com/wyyufeng/eminem#readme",
@@ -30,6 +30,7 @@
     "@babel/preset-env": "^7.9.6",
     "@babel/preset-react": "^7.9.4",
     "@babel/runtime": "^7.9.6",
+    "babel-eslint": "^10.1.0",
     "babel-plugin-macros": "^2.8.0",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24"
   }

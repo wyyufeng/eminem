@@ -8,7 +8,7 @@ module.exports = (_, opts = { react: false }) => {
     return {
         presets: [
             [
-                '@babel/preset-env',
+                require.resolve('@babel/preset-env'),
                 {
                     useBuiltIns: 'usage',
                     corejs: 3,
@@ -25,9 +25,9 @@ module.exports = (_, opts = { react: false }) => {
             ]
         ].filter(Boolean),
         plugins: [
-            'babel-plugin-macros',
+            require.resolve('babel-plugin-macros'),
             [
-                '@babel/plugin-proposal-class-properties',
+                require.resolve('@babel/plugin-proposal-class-properties'),
                 {
                     loose: true
                 }
@@ -39,8 +39,8 @@ module.exports = (_, opts = { react: false }) => {
                     version: require('@babel/runtime/package.json').version
                 }
             ],
-            '@babel/plugin-proposal-optional-chaining',
-            '@babel/plugin-proposal-nullish-coalescing-operator',
+            require.resolve('@babel/plugin-proposal-optional-chaining'),
+            require.resolve('@babel/plugin-proposal-nullish-coalescing-operator'),
             isEnvProduction &&
                 react && [
                     require('babel-plugin-transform-react-remove-prop-types').default,
