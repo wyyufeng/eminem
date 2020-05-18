@@ -5,7 +5,10 @@ const react = () => (context) => {
         babel: {
             language: 'javascriptreact'
         },
-        eslint: { language: 'javascriptreact' }
+        eslint: {
+            language: 'javascriptreact',
+            baseConfig: { extends: ['eslint:recommended', 'plugin:react/recommended'] }
+        }
     })(context);
     return context;
 };

@@ -74,7 +74,10 @@ const web = (opts = {}) => {
                         ? 'css/[name].[contenthash:8].chunk.css'
                         : 'css/[name].chunk.css'
             },
-            eslint: { language: 'javascript' },
+            eslint: {
+                language: 'javascript',
+                baseConfig: { extends: ['eslint:recommended'] }
+            },
             html: { meta: {}, minify: {} },
             image: {
                 limit: 8192,
