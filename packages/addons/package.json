@@ -1,6 +1,6 @@
 {
   "name": "@eminemjs/addons",
-  "version": "0.2.8",
+  "version": "0.3.0",
   "description": "> TODO: description",
   "author": "wyyufeng <wyyufeng@gmail.com>",
   "homepage": "https://github.com/wyyufeng/eminem#readme",
@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "@babel/core": "^7.9.6",
-    "@eminemjs/babel-preset": "^0.2.7",
+    "@eminemjs/babel-preset": "^0.3.0",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.1.0",
     "babel-preset-react-app": "^9.1.2",
@@ -58,8 +58,8 @@
     "webpack-manifest-plugin": "^2.2.0"
   },
   "peerDependencies": {
-    "webpack": "^4.43.0",
-    "sharp": "0.25.3"
+    "sharp": "0.25.3",
+    "webpack": "^4.43.0"
   },
   "gitHead": "bf4c5e60bb3d37d057fb85bc58dbfefbceba2546"
 }
