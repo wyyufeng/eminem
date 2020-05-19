@@ -14,6 +14,7 @@ function eslint({ language, ...others }) {
                 failOnWarning: context.options.isEnvProduction,
                 failOnError: context.options.isEnvProduction,
                 cache: true,
+                baseConfig: { extends: ['eslint:recommended', 'plugin:react/recommended'] },
                 ...others
             })
             .end();

@@ -16,7 +16,7 @@ class InitTask extends Task {
         this.projectDir = isCurrentDir
             ? path.resolve(process.cwd())
             : path.resolve(path.resolve(process.cwd(), name));
-        this.dependencies = [template, '@eminemjs/addons', '@eminemjs/scripts'];
+        this.dependencies = [template, '@eminemjs/scripts', '@eminemjs/addons'];
         this.templatePath = path.resolve(
             this.projectDir,
             './node_modules',
