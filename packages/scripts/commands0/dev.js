@@ -65,7 +65,9 @@ choosePort(host, port).then((port) => {
     });
     const devServer = new WebpackDevServer(
         compiler,
-        dev.devServer(project)(context).toConfig().devServer
+        dev
+            .devServer(project)(context)
+            .toConfig().devServer
     );
     devServer.listen(port, host, (err) => {
         if (err) {

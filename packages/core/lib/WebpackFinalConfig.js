@@ -27,7 +27,7 @@ class WebpackFinalConfig {
             }
             if (Array.isArray(use)) {
                 use.reduce((a, b) => {
-                    b(a(this.context));
+                    return (ctx) => b(a(ctx));
                 })(this.context);
             } else {
                 use(this.context);

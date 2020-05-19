@@ -160,7 +160,8 @@ const web = (opts = {}) => {
             devtool,
             image,
             clean,
-            devServer
+            devServer,
+            alias
         } = webOptions;
         const { filename, chunkFilename } = webOptions.output;
         const { isEnvProduction, apps } = context.options;
@@ -197,7 +198,7 @@ const web = (opts = {}) => {
             isEnvProduction && jsminimizer(),
             isEnvProduction && cssminimizer(),
             isEnvProduction && splitChunks(),
-            resolve()
+            resolve({ alias })
         ].filter(Boolean);
         // 运行middleware 修改context
         compose(middleware)(context);

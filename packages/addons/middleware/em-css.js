@@ -25,7 +25,10 @@ const f = ({ publicPath, postcss, filename, chunkFilename, ...others }) => (cont
                     .end();
             },
             (config) => {
-                config.use('style').loader(require.resolve('style-loader')).end();
+                config
+                    .use('style')
+                    .loader(require.resolve('style-loader'))
+                    .end();
             }
         )
         .use('css')
