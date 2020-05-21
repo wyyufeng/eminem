@@ -38,7 +38,8 @@
     "get-port": "^5.1.1",
     "gzip-size": "^5.1.1",
     "webpack": "^4.43.0",
-    "webpack-dev-server": "^3.10.3"
+    "webpack-dev-server": "^3.10.3",
+    "webpack-format-messages": "^2.0.6"
   },
   "devDependencies": {
     "@eminemjs/core": ""

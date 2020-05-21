@@ -1,7 +1,5 @@
 module.exports = ({ publicPath, proxy }) => (context) => {
     context.devServer
-        .set('transportMode', 'ws')
-        .set('injectClient', false)
         .historyApiFallback({
             disableDotRule: true
         })

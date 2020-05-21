@@ -10,7 +10,7 @@ const manifestPipe = require('../middleware/em-manifest');
 const helper = require('../middleware/em-helper');
 const filePipe = require('../middleware/em-file');
 const ignorePipe = require('../middleware/em-ignore');
-const hotreload = require('../middleware/em-hotreload');
+const hmr = require('../middleware/em-hmr');
 const message = require('../middleware/em-print');
 const env = require('../middleware/em-env');
 const devtoolPipe = require('../middleware/em-devtool');
@@ -22,6 +22,7 @@ const cleanPipe = require('../middleware/em-clean');
 const compose = require('../util/compose');
 const splitChunks = require('../middleware/em-splitchunks');
 const resolve = require('../middleware/em-resolve');
+const errorOverlay = require('../middleware/em-overlay');
 const { join, extname, basename } = require('path');
 const merge = require('lodash.merge');
 
@@ -127,15 +128,6 @@ const web = (opts = {}) => {
                 name: 'static/[name].[ext]'
             },
             ignore: [/^\.\/locale$/, /moment$/],
-            print: (context) => {
-                return {
-                    compilationSuccessInfo: {
-                        messages: [
-                            `You application is running here: ${context.options.urls.localUrl}`
-                        ]
-                    }
-                };
-            },
             devtool: (env) => (env === 'production' ? 'cheap-module-source-map' : 'source-map'),
             devServer: {
                 publicPath: '/',
@@ -159,7 +151,6 @@ const web = (opts = {}) => {
             inlineChunk,
             file,
             ignore,
-            print,
             devtool,
             image,
             clean,
@@ -173,7 +164,10 @@ const web = (opts = {}) => {
         apps.forEach((app) => {
             const devClient = isEnvProduction
                 ? []
-                : [require.resolve('react-dev-utils/webpackHotDevClient')];
+                : [
+                      'webpack/hot/dev-server',
+                      `webpack-dev-server/client?http://localhost:${context.options.port}`
+                  ];
             devClient.unshift(join(appSource, app.entry));
             app.entry = devClient;
         });
@@ -191,12 +185,12 @@ const web = (opts = {}) => {
             helper(inlineChunk),
             filePipe(file),
             ignorePipe(ignore),
-            !isEnvProduction && hotreload(),
-            message(print(context)),
+            !isEnvProduction && hmr(),
             env(),
             clean && cleanPipe(clean),
             devtoolPipe(devtool),
             other(),
+            !isEnvProduction && errorOverlay(),
             !isEnvProduction && devServerAddon(devServer),
             isEnvProduction && jsminimizer(),
             isEnvProduction && cssminimizer(),
