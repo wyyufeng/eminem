@@ -3,6 +3,7 @@ process.env.NODE_ENV = 'production';
 const chalk = require('chalk');
 const fs = require('fs-extra');
 const path = require('path');
+const formatMessages = require('webpack-format-messages');
 const flatten = require('array-flatten').flatten;
 const filesize = require('filesize');
 const gzipSize = require('gzip-size');
@@ -32,8 +33,11 @@ function build() {
             console.log(err);
             process.exit(1);
         }
+        const messages = formatMessages(stats);
         if (stats.hasErrors()) {
-            return console.log(`${chalk.yellowBright("There's something wrong~~")}`);
+            console.log(chalk.redBright('Failed to build.'));
+            messages.errors.forEach((e) => console.log(e));
+            return;
         }
         printFileSize(webpackFinalCompiler.context.paths.appOutput);
         version.incBuildVersion();
