@@ -8,7 +8,6 @@ const fs = require('fs-extra');
 const postcss = require('postcss');
 const isCss = (filename) => path.extname(filename) === '.css';
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const InlineCodePlugin = require('./InlineCodeHtmlPlugin');
 const webpRuntime = (clsPrefix) => `
 window.WEBP_SUPPORT = (function canUseWebP() {
     var flag = false;
@@ -157,19 +156,20 @@ module.exports = class WebpGeneratePlugin {
      * @param {*} compiler
      */
     generateWebpRuntime(compiler) {
-        InlineCodePlugin.hooks.emitCodeAssets.tap('WebpGeneratePlugin', (codeAssets) => {
-            codeAssets.push({
-                tagName: 'script',
-                innerHTML: webpRuntime(this.options.clsPrefix),
-                closeTag: true,
-                _webpRuntime: true
-            });
-        });
-
         compiler.hooks.compilation.tap('WebpGeneratePlugin', (compilation) => {
             compilation.hooks.optimizeChunkAssets.tapAsync(
                 'WebpGeneratePlugin',
                 (chunks, callback) => {
+                    const hooks = HtmlWebpackPlugin.getHooks(compilation);
+                    hooks.alterAssetTagGroups.tap('InlineWebpRuntime', (assets) => {
+                        const headTags = assets.headTags;
+                        headTags.unshift({
+                            tagName: 'script',
+                            innerHTML: webpRuntime(this.options.clsPrefix),
+                            closeTag: true,
+                            _webpRuntime: true
+                        });
+                    });
                     this.generateCSSSupport(compilation, chunks)
                         .then((map) => {
                             map.forEach((rawSource, key) => {
