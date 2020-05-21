@@ -47,8 +47,8 @@ const defaultProps = {
 };
 
 module.exports = class WebpGeneratePlugin {
-    constructor(options = defaultProps) {
-        this.options = options;
+    constructor(options = {}) {
+        this.options = Object.assign(defaultProps, options);
 
         this.cacheThunk = findCacheDir({ name: 'webp', create: true, thunk: true });
     }
