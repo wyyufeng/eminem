@@ -8,7 +8,7 @@ const fs = require('fs-extra');
 const postcss = require('postcss');
 const isCss = (filename) => path.extname(filename) === '.css';
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const InlineCodePlugin = require('../plugins/InlineCodeHtmlPlugin');
+const InlineCodePlugin = require('./InlineCodeHtmlPlugin');
 const webpRuntime = (clsPrefix) => `
 window.WEBP_SUPPORT = (function canUseWebP() {
     var flag = false;
@@ -100,10 +100,7 @@ module.exports = class WebpGeneratePlugin {
      * @param {Function} reject 未命中缓存时的回调函数
      */
     cacheWebp(content, resolve, reject) {
-        const hash = crypto
-            .createHash('sha1')
-            .update(content)
-            .digest('hex');
+        const hash = crypto.createHash('sha1').update(content).digest('hex');
         const cacheFilePath = this.cacheThunk(hash);
         fs.exists(cacheFilePath)
             .then((exists) => {
