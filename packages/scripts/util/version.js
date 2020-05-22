@@ -13,7 +13,7 @@ const version = {
 
         const pkg = fs.readJSONSync(pkgPath);
         const pkgCopy = JSON.parse(JSON.stringify(pkg));
-        const nextVersion = semver.inc(current, 'major');
+        const nextVersion = semver.inc(current, 'minor');
         pkgCopy.version = nextVersion;
         try {
             fs.writeJSONSync(pkgPath, pkgCopy, {
@@ -27,7 +27,7 @@ const version = {
     },
     nextVersion() {
         const current = this.current();
-        const nextVersion = semver.inc(current, 'major');
+        const nextVersion = semver.inc(current, 'minor');
         return nextVersion;
     }
 };

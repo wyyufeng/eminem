@@ -87,7 +87,7 @@ const web = (opts = {}) => {
             },
             manifest: (context) => {
                 return {
-                    fileName: `assets-manifest.v${context.version}.json`,
+                    fileName: `assets-manifest.v${context.options.version || '1.0.0'}.json`,
                     publicPath: context.options.appPublic,
                     seed: { js: {}, css: {}, image: {}, sourceMaps: {}, html: {}, others: {} },
                     generate: (seed, files) => {
