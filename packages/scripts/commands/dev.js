@@ -13,6 +13,7 @@ const WebpackDevServer = require('webpack-dev-server');
 const getPort = require('get-port');
 const createCompiler = require('../util/createCompiler');
 const { formatAddress } = require('../util/formatAddress');
+const clearConsole = require('../util/clearConsole');
 const chalk = require('chalk');
 const options = {};
 const port = 3000;
@@ -33,7 +34,7 @@ getPort({ host, port }).then((p) => {
         return console.error('\n no free port');
     }
     if (port !== p) {
-        console.warn(`\n The port ${port} is busy and will use ${p}`);
+        console.warn(`\n The port ${port} is busy and will fallback to ${p}`);
     }
     const urls = formatAddress(p, protocol);
     options.port = p;
@@ -48,7 +49,13 @@ getPort({ host, port }).then((p) => {
     delete finalConfig.devServer;
     const devServer = new WebpackDevServer(compiler, devServerOptions);
 
+    compiler.hooks.invalid.tap('invalid', function () {
+        clearConsole();
+        console.log('Compiling...');
+    });
+
     compiler.hooks.done.tap('done', (stats) => {
+        clearConsole();
         const messages = formatMessages(stats);
 
         if (!messages.errors.length && !messages.warnings.length) {
