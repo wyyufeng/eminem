@@ -1,8 +1,7 @@
 module.exports = ({ publicPath, postcss, filename, chunkFilename, ...others }) => (context) => {
     // console.log(context.module.rule('module').oneOf('normal').rule);
     context.module
-        .rule('module')
-        .oneOf('normal')
+
         .rule('css')
         .test(context.getRegexFromExt('css'))
         .when(

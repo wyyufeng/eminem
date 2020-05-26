@@ -1,8 +1,7 @@
 module.exports = function ({ language, ...others }) {
     return (context) => {
         context.module
-            .rule('module')
-            .oneOf('normal')
+
             .rule('compile')
             .test(context.getRegexFromExt(language))
             .include.add(context.paths.appSource)

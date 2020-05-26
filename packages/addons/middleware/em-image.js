@@ -1,7 +1,6 @@
 module.exports = ({ limit, name }) => (context) => {
     context.module
-        .rule('module')
-        .oneOf('normal')
+
         .rule('image')
         .test(context.getRegexFromExt('image'))
         .use('url-loader')
