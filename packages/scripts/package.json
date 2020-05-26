@@ -26,6 +26,7 @@
     "url": "https://github.com/wyyufeng/eminem/issues"
   },
   "dependencies": {
+    "@eminemjs/core": "",
     "address": "^1.1.2",
     "array-flatten": "^3.0.0",
     "chalk": "^4.0.0",
@@ -36,8 +37,7 @@
     "gzip-size": "^5.1.1",
     "webpack": "^4.43.0",
     "webpack-dev-server": "^3.10.3",
-    "webpack-format-messages": "^2.0.6",
-    "@eminemjs/core": ""
+    "webpack-format-messages": "^2.0.6"
   },
   "gitHead": "f3b7cf24bb356ad3a49a3cbee0d65312f22c02b3"
 }
