@@ -1,4 +1,4 @@
-const pipe = () => (context) => {
+module.exports = () => (context) => {
     context.options.apps.forEach((app) => {
         const entryCtx = context.entry(app.name);
         if (Array.isArray(app.entry)) {
@@ -10,5 +10,3 @@ const pipe = () => (context) => {
     });
     return context;
 };
-
-module.exports = pipe;

@@ -1,5 +1,5 @@
 const { resolve } = require('path');
-function htmlTemplate(opts) {
+module.exports = function htmlTemplate(opts) {
     return (context) => {
         context.options.apps.forEach((app) => {
             const pluginOptions = Object.assign(
@@ -37,6 +37,4 @@ function htmlTemplate(opts) {
         });
         return context;
     };
-}
-
-module.exports = htmlTemplate;
+};

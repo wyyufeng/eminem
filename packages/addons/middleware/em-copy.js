@@ -4,8 +4,7 @@
  * @param {String} opts.from
  * @param {String} opts.to
  */
-const f = (opts) => (context) => {
+module.exports = (opts) => (context) => {
     context.plugin('CopyPlugin').use(require.resolve('copy-webpack-plugin'), [[{ ...opts }]]);
     return context;
 };
-module.exports = f;

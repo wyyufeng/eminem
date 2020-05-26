@@ -43,7 +43,7 @@ getPort({ host, port }).then((p) => {
     const webpackFinalCompiler = new WebpackFinalConfig(options);
     const finalConfig = webpackFinalCompiler.toWebpack();
     const compiler = createCompiler(finalConfig);
-
+    let isFirstCompile = true;
     const devServerOptions = finalConfig.devServer;
 
     delete finalConfig.devServer;
@@ -57,8 +57,8 @@ getPort({ host, port }).then((p) => {
     compiler.hooks.done.tap('done', (stats) => {
         clearConsole();
         const messages = formatMessages(stats);
-
-        if (!messages.errors.length && !messages.warnings.length) {
+        const isSuccessful = !messages.errors.length && !messages.warnings.length;
+        if (isSuccessful) {
             console.log(chalk.greenBright('Compiled successfully!'));
         }
 
@@ -72,6 +72,17 @@ getPort({ host, port }).then((p) => {
             console.log(chalk.yellowBright('Compiled with warnings.'));
             messages.warnings.forEach((w) => console.log(w));
         }
+        if (isFirstCompile && isSuccessful) {
+            console.log();
+            console.log(`You can now view your application in the browser.`);
+            console.log();
+
+            console.log(`  ${chalk.bold('Local:')}            ${urls.localUrl}`);
+            console.log(`  ${chalk.bold('On Your Network:')}  ${urls.lanUrl}`);
+
+            console.log();
+        }
+        isFirstCompile = false;
     });
 
     devServer.listen(p, host, (err) => {

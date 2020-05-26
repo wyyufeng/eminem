@@ -1048,10 +1048,10 @@
   resolved "https://registry.npm.taobao.org/@csstools/normalize.css/download/@csstools/normalize.css-10.1.0.tgz#f0950bba18819512d42f7197e56c518aa491cf18"
   integrity sha1-8JULuhiBlRLUL3GX5WxRiqSRzxg=
 
-"@eminemjs/babel-preset@^0.3.2":
-  version "0.3.2"
-  resolved "https://registry.npm.taobao.org/@eminemjs/babel-preset/download/@eminemjs/babel-preset-0.3.2.tgz?cache=0&sync_timestamp=1589873352133&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40eminemjs%2Fbabel-preset%2Fdownload%2F%40eminemjs%2Fbabel-preset-0.3.2.tgz#72081425b7ed9fc1722b4118c66e6e31aabd98a4"
-  integrity sha1-cggUJbftn8FyK0EYxm5uMaq9mKQ=
+"@eminemjs/babel-preset@^0.5.0":
+  version "0.5.0"
+  resolved "https://registry.npm.taobao.org/@eminemjs/babel-preset/download/@eminemjs/babel-preset-0.5.0.tgz#88b02105447e5d0a34716b7cc2c1feb8a3a6ed51"
+  integrity sha1-iLAhBUR+XQo0cWt8wsH+uKOm7VE=
   dependencies:
     "@babel/core" "^7.9.6"
     "@babel/plugin-proposal-class-properties" "^7.8.3"

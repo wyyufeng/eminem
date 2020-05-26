@@ -1,5 +1,8 @@
-const f = ({ publicPath, postcss, filename, chunkFilename, ...others }) => (context) => {
+module.exports = ({ publicPath, postcss, filename, chunkFilename, ...others }) => (context) => {
+    // console.log(context.module.rule('module').oneOf('normal').rule);
     context.module
+        .rule('module')
+        .oneOf('normal')
         .rule('css')
         .test(context.getRegexFromExt('css'))
         .when(
@@ -25,10 +28,7 @@ const f = ({ publicPath, postcss, filename, chunkFilename, ...others }) => (cont
                     .end();
             },
             (config) => {
-                config
-                    .use('style')
-                    .loader(require.resolve('style-loader'))
-                    .end();
+                config.use('style').loader(require.resolve('style-loader')).end();
             }
         )
         .use('css')
@@ -61,4 +61,3 @@ const f = ({ publicPath, postcss, filename, chunkFilename, ...others }) => (cont
 
     return context;
 };
-module.exports = f;

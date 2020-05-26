@@ -23,6 +23,7 @@ const compose = require('../util/compose');
 const splitChunks = require('../middleware/em-splitchunks');
 const resolve = require('../middleware/em-resolve');
 const errorOverlay = require('../middleware/em-overlay');
+const emmodule = require('../middleware/em-module');
 const { join, extname, basename } = require('path');
 const merge = require('lodash.merge');
 
@@ -175,6 +176,7 @@ const web = (opts = {}) => {
         const middleware = [
             entry(),
             output({ publicPath, filename, chunkFilename }),
+            emmodule(),
             compile(babel),
             css(style),
             sass(style),

@@ -1,5 +1,7 @@
 module.exports = ({ publicPath, filename, chunkFilename, postcss, ...others }) => (context) => {
     context.module
+        .rule('module')
+        .oneOf('normal')
         .rule('sass')
         .test(context.getRegexFromExt('sass'))
         .when(

@@ -1,4 +1,4 @@
-function eslint({ language, ...others }) {
+module.exports = function eslint({ language, ...others }) {
     return (context) => {
         context.module
             .rule('lint')
@@ -20,6 +20,4 @@ function eslint({ language, ...others }) {
             .end();
         return context;
     };
-}
-
-module.exports = eslint;
+};
