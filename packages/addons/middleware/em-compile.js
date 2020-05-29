@@ -14,7 +14,7 @@ module.exports = function ({ language, ...others }) {
                 compact: context.options.isEnvProduction,
                 presets: [
                     [
-                        require.resolve('@eminemjs/babel-preset'),
+                        require('@eminemjs/babel-preset'),
                         {
                             react: language === 'javascriptreact'
                         }
