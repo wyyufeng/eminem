@@ -8,6 +8,8 @@ const flatten = require('array-flatten').flatten;
 const filesize = require('filesize');
 const gzipSize = require('gzip-size');
 const version = require('../util/version');
+const clearConsole = require('../util/clearConsole');
+
 const WARN_AFTER_BUNDLE_SIZE = 250 * 1024; //kb
 
 process.on('unhandledRejection', (err) => {
@@ -27,7 +29,10 @@ function build() {
     const webpackFinalCompiler = new WebpackFinalConfig(options);
     const finalConfig = webpackFinalCompiler.toWebpack();
     const compiler = createCompiler(finalConfig);
+    console.log(chalk.blueBright('start building...'));
+
     compiler.run((err, stats) => {
+        clearConsole();
         if (err) {
             console.log(`build failed...(T＿T)`);
             console.log(err);

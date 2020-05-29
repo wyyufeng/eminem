@@ -4,7 +4,7 @@ module.exports = (opts) => (context) => {
         .plugin('ManifestPlugin')
         .use(require.resolve('webpack-manifest-plugin'), [
             {
-                fileName: `assets-manifest.v${context.version}.json`,
+                fileName: `assets-manifest.v${context.options.version}.json`,
                 publicPath: context.options.appPublic,
                 seed: { js: {}, css: {}, image: {}, sourceMaps: {}, html: {}, others: {} },
                 generate: (seed, files) => {
@@ -15,10 +15,10 @@ module.exports = (opts) => (context) => {
                             manifest['sourceMaps'][basename] = file.path;
                             return manifest;
                         }
-                        // if (context.extensions.image.include(ext.substr(1))) {
-                        //     manifest['image'][basename] = file.path;
-                        //     return manifest;
-                        // }
+                        if (context.extensions.image.includes(ext.substr(1))) {
+                            manifest['image'][basename] = file.path;
+                            return manifest;
+                        }
                         if (ext === '.js') {
                             manifest['js'][basename] = file.path;
                             return manifest;
