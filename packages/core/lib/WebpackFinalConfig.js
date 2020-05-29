@@ -14,6 +14,7 @@ class WebpackFinalConfig {
 
         this.config = require(this.configPath);
         this.config.shouldUseSourceMap = userConfig.sourceMap;
+        this.config.strict = typeof userConfig.strict === 'undefined' ? true : userConfig.strict;
         this.middlewareMap = new Map();
         this.context = new Context({ ...this.config, ...otherOpts });
     }

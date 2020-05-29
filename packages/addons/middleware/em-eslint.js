@@ -11,8 +11,8 @@ module.exports = function eslint({ language, ...others }) {
             .options({
                 formatter: require.resolve('react-dev-utils/eslintFormatter'),
                 eslintPath: require.resolve('eslint'),
-                failOnWarning: context.options.isEnvProduction,
-                failOnError: context.options.isEnvProduction,
+                failOnWarning: context.options.isEnvProduction && context.config.strict,
+                failOnError: context.options.isEnvProduction && context.config.strict,
                 cache: true,
                 baseConfig: { extends: ['eslint:recommended', 'plugin:react/recommended'] },
                 ...others
