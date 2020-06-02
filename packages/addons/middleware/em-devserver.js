@@ -3,7 +3,6 @@ module.exports = ({ publicPath, proxy }) => (context) => {
         .historyApiFallback({
             disableDotRule: true
         })
-
         .disableHostCheck(true)
         .compress(true)
         .clientLogLevel('none')
@@ -17,10 +16,7 @@ module.exports = ({ publicPath, proxy }) => (context) => {
         .quiet(true)
         .open(true)
         .useLocalIp(true)
-        .public(context.options.urls.lanUrl)
-        .when(proxy, (config) => {
-            config.proxy(proxy);
-        });
+        .public(context.options.urls.lanUrl);
 
     return context;
 };

@@ -131,8 +131,7 @@ const web = (opts = {}) => {
             ignore: [/^\.\/locale$/, /moment$/],
             devtool: (env) => (env === 'production' ? 'cheap-module-source-map' : 'source-map'),
             devServer: {
-                publicPath: '/',
-                proxy: ''
+                publicPath: '/'
             },
             clean: {},
             overlay: true,
