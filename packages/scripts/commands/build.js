@@ -58,10 +58,9 @@ function build() {
                 replacer: null
             }
         );
-        console.log(`You can view the result with: `);
-        console.log(`${chalk.blueBright('npx serve build')}`);
+        console.log(`You can view the result with: ${chalk.blueBright('npx serve build')} `);
         console.log(
-            `You can also install the package globally using Yarn with:   ${chalk.blueBright(
+            `You can also install the package globally using Yarn with: ${chalk.blueBright(
                 'yarn global add serve'
             )},and then run: ${chalk.blueBright('serve build')}`
         );
