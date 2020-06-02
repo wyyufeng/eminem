@@ -14,7 +14,7 @@ class WebpackFinalConfig {
         if (!NODE_ENV) {
             throw new Error('The NODE_ENV environment variable is required but was not specified.');
         }
-
+        this.NODE_ENV = NODE_ENV;
         this.configPath = resolvePath('.emrc.js');
         const userConfig = require(this.configPath);
 
