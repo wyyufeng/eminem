@@ -74,5 +74,6 @@ module.exports = {
 ```
 
 #### 其他选项 🧨
+ - app 程序的入口文件(从src目录开始)和html模板文件(从public目录开始)
  - sourceMap 是否生成sourcce map文件
  - strict 默认情况下,构建过程中如果代码中存在lint警告或错误将导致build失败，这是为了强制使用统一的代码规范，如果你对此感到绝望，可是将此选项设为false以关闭该检查
