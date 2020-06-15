@@ -10,7 +10,7 @@ process.on('unhandledRejection', (err) => {
 const { WebpackFinalConfig } = require('@eminemjs/core');
 const formatMessages = require('webpack-format-messages');
 const WebpackDevServer = require('webpack-dev-server');
-const getPort = require('get-port');
+const portfinder = require('portfinder');
 const createCompiler = require('../util/createCompiler');
 const { formatAddress } = require('../util/formatAddress');
 const clearConsole = require('../util/clearConsole');
@@ -29,7 +29,7 @@ function setupOptions() {
 
 setupOptions();
 
-getPort({ host, port }).then((p) => {
+portfinder.getPortPromise({ host, port }).then((p) => {
     if (p == null) {
         return console.error('\n no free port');
     }
