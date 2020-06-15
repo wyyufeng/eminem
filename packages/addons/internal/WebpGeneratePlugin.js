@@ -25,7 +25,7 @@ const defaultProps = {
     /**
      * 转换的阈值,等于 url-loader 的limit值,
      */
-    limit: 10000,
+    limit: 8192,
     /**
      * 生成的webp兼容代码的选择器
      */
