@@ -19,11 +19,11 @@ module.exports = postcss.plugin('webp-plugin', (opts) => {
                     const selector = '.' + clsPrefix + ' ' + rule.selector;
                     newRule.selector = selector;
 
-                    newRule.prepend({
+                    newRule.append({
                         prop: 'background-image',
                         value: `url(${imgPath[1] + webpSuffix})`
                     });
-                    newRoot.prepend(newRule);
+                    newRoot.append(newRule);
                 }
             });
         });
