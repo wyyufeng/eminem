@@ -23,12 +23,12 @@ module.exports = postcss.plugin('webp-plugin', (opts) => {
                         prop: 'background-image',
                         value: `url(${imgPath[1] + webpSuffix})`
                     });
-                    newRoot.append(newRule);
+                    newRoot.prepend(newRule);
                 }
             });
         });
         if (mode === 'mix') {
-            return root.prepend(newRoot);
+            return root.append(newRoot);
         }
         result.root = newRoot;
         return newRoot;
