@@ -11,7 +11,6 @@ const helper = require('../middleware/em-helper');
 const filePipe = require('../middleware/em-file');
 const ignorePipe = require('../middleware/em-ignore');
 const hmr = require('../middleware/em-hmr');
-const message = require('../middleware/em-print');
 const env = require('../middleware/em-env');
 const devtoolPipe = require('../middleware/em-devtool');
 const other = require('../middleware/em-other');
@@ -24,6 +23,7 @@ const splitChunks = require('../middleware/em-splitchunks');
 const resolve = require('../middleware/em-resolve');
 const errorOverlay = require('../middleware/em-overlay');
 const emmodule = require('../middleware/em-module');
+const forktschecker = require('../middleware/em-forktschecker');
 const { join, extname, basename } = require('path');
 const merge = require('lodash.merge');
 
@@ -137,7 +137,8 @@ const web = (opts = {}) => {
             overlay: true,
             alias: {
                 '@': context.paths.appSource
-            }
+            },
+            useTypeScript: false
         };
 
         const webOptions = merge(defaultOptions, opts);
@@ -155,7 +156,8 @@ const web = (opts = {}) => {
             image,
             clean,
             devServer,
-            alias
+            alias,
+            useTypeScript
         } = webOptions;
         const { filename, chunkFilename } = webOptions.output;
         const { isEnvProduction, apps } = context.options;
@@ -176,7 +178,7 @@ const web = (opts = {}) => {
             entry(),
             output({ publicPath, filename, chunkFilename }),
             emmodule(),
-            compile(babel),
+            compile({ ...babel, useTypeScript }),
             css(style),
             sass(style),
             htmlPipe(html),
@@ -191,6 +193,7 @@ const web = (opts = {}) => {
             clean && cleanPipe(clean),
             devtoolPipe(devtool),
             other(),
+            useTypeScript && forktschecker(),
             !isEnvProduction && errorOverlay(),
             !isEnvProduction && devServerAddon(devServer),
             isEnvProduction && jsminimizer(),

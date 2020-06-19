@@ -1,4 +1,4 @@
-module.exports = function ({ language, ...others }) {
+module.exports = function ({ language, useTypeScript, ...others }) {
     return (context) => {
         context.module
 
@@ -16,7 +16,8 @@ module.exports = function ({ language, ...others }) {
                     [
                         require('@eminemjs/babel-preset'),
                         {
-                            react: language === 'javascriptreact'
+                            react: language === 'javascriptreact',
+                            useTypeScript
                         }
                     ]
                 ],

@@ -3,16 +3,10 @@ module.exports = (opts) => (context) => {
         .rule('file')
         .enforce('post')
         .exclude.add(
-            [
-                'javascript',
-                'javascriptreact',
-                'typescript',
-                'html',
-                'sass',
-                'css',
-                'json',
-                'image'
-            ].map(context.getRegexFromExt, context)
+            ['javascript', 'javascriptreact', 'html', 'sass', 'css', 'json', 'image'].map(
+                context.getRegexFromExt,
+                context
+            )
         )
         .end()
         .use('file-loader')

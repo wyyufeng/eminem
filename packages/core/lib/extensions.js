@@ -1,7 +1,6 @@
 module.exports = {
-    javascript: ['mjs', 'js'],
-    javascriptreact: ['jsx', 'js'],
-    typescript: ['ts', 'tsx'],
+    javascript: ['mjs', 'js', 'ts'],
+    javascriptreact: ['jsx', 'js', 'ts', 'tsx'],
     html: ['html', 'htm'],
     css: ['css'],
     sass: ['sass', 'scss'],

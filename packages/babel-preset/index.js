@@ -5,6 +5,7 @@ module.exports = (_, opts = { react: false }) => {
     const env = process.env.BABEL_ENV || process.env.NODE_ENV;
     const isEnvDevelopment = env === 'development';
     const isEnvProduction = env === 'production';
+    const useTypeScript = opts.useTypeScript;
     return {
         presets: [
             [
@@ -22,7 +23,8 @@ module.exports = (_, opts = { react: false }) => {
 
                     useBuiltIns: true
                 }
-            ]
+            ],
+            useTypeScript && ['@babel/preset-typescript']
         ].filter(Boolean),
         plugins: [
             require.resolve('babel-plugin-macros'),
@@ -33,7 +35,7 @@ module.exports = (_, opts = { react: false }) => {
                 }
             ],
             [
-                '@babel/plugin-transform-runtime',
+                require.resolve('@babel/plugin-transform-runtime'),
                 {
                     helpers: true,
                     version: require('@babel/runtime/package.json').version
@@ -47,7 +49,8 @@ module.exports = (_, opts = { react: false }) => {
                     {
                         removeImport: true
                     }
-                ]
+                ],
+            useTypeScript && [require('@babel/plugin-proposal-decorators').default, false]
         ].filter(Boolean)
     };
 };

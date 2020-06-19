@@ -1,15 +1,19 @@
 const web = require('./web');
-
-const react = () => (context) => {
-    web({
-        babel: {
-            language: 'javascriptreact'
+const merge = require('lodash.merge');
+const react = (opts = {}) => (context) => {
+    const options = merge(
+        {
+            babel: {
+                language: 'javascriptreact'
+            },
+            eslint: {
+                language: 'javascriptreact',
+                baseConfig: { extends: ['eslint:recommended', 'plugin:react/recommended'] }
+            }
         },
-        eslint: {
-            language: 'javascriptreact',
-            baseConfig: { extends: ['eslint:recommended', 'plugin:react/recommended'] }
-        }
-    })(context);
+        opts
+    );
+    web(options)(context);
     return context;
 };
 module.exports = react;

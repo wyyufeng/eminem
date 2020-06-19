@@ -38,7 +38,8 @@ class InitTask extends Task {
             scripts: {
                 start: 'em-scripts dev',
                 build: 'em-scripts build',
-                analyse: 'em-scripts analyse'
+                analyse: 'em-scripts analyse',
+                lint: 'eslint -c .eslintrc.js src/**/*.{js,jsx,ts,tsx} '
             }
         };
     }
