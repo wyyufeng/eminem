@@ -30,7 +30,7 @@ class InitTask extends Task {
             'template.json'
         );
         this.packageJson = {
-            name: name,
+            name: name.toLocaleLowerCase(),
             version: '0.0.0',
             description: this.appName,
             license: 'MIT',
