@@ -1,5 +1,5 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-module.exports = (lineChunk) => (context) => {
+module.exports = ({ inlineChunk, version, build }) => (context) => {
     context
         .plugin('WatchMissingNodeModulesPlugin')
         .use(require.resolve('react-dev-utils/WatchMissingNodeModulesPlugin'), [
@@ -9,7 +9,7 @@ module.exports = (lineChunk) => (context) => {
         .plugin('InlineChunkHtmlPlugin')
         .use(require.resolve('react-dev-utils/InlineChunkHtmlPlugin'), [
             HtmlWebpackPlugin,
-            lineChunk
+            inlineChunk
         ])
         .end()
         .plugin('ModuleNotFoundPlugin')
@@ -20,6 +20,9 @@ module.exports = (lineChunk) => (context) => {
         .end()
         .plugin('EnvScriptHtmlPlugin')
         .use(require('../internal/EnvScriptHtmlPlugin'), [HtmlWebpackPlugin])
+        .end()
+        .plugin('InjectVersionHtmlPlugin')
+        .use(require('../internal/InjectVersionHtmlPlugin'), [{ version, build }])
         .end();
     return context;
 };

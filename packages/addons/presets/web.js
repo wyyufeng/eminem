@@ -55,6 +55,7 @@ const merge = require('lodash.merge');
  */
 const web = (opts = {}) => {
     return (context) => {
+        const buildTime = new Date().toLocaleString();
         const defaultOptions = {
             publicPath: '/',
             output: {
@@ -118,13 +119,17 @@ const web = (opts = {}) => {
                             manifest['others'][baseName] = file.path;
                             return manifest;
                         }, seed);
-                        manifestFiles.version = context.version;
-                        manifestFiles.buildOn = new Date().toLocaleString();
+                        manifestFiles.version = context.options.version;
+                        manifestFiles.build = buildTime;
                         return manifestFiles;
                     }
                 };
             },
-            inlineChunk: [/runtime-.+[.]js/],
+            helperOpts: {
+                inlineChunk: [/runtime-.+[.]js/],
+                version: context.options.version,
+                build: buildTime
+            },
             file: {
                 name: 'static/[name].[ext]'
             },
@@ -149,7 +154,6 @@ const web = (opts = {}) => {
             html,
             eslint,
             manifest,
-            inlineChunk,
             file,
             ignore,
             devtool,
@@ -157,7 +161,8 @@ const web = (opts = {}) => {
             clean,
             devServer,
             alias,
-            useTypeScript
+            useTypeScript,
+            helperOpts
         } = webOptions;
         const { filename, chunkFilename } = webOptions.output;
         const { isEnvProduction, apps } = context.options;
@@ -185,7 +190,7 @@ const web = (opts = {}) => {
             eslint && eslintPipe(eslint),
             imagePipe(image),
             manifestPipe(manifest(context)),
-            helper(inlineChunk),
+            helper(helperOpts),
             filePipe(file),
             ignorePipe(ignore),
             !isEnvProduction && hmr(),
