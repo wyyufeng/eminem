@@ -21,8 +21,12 @@ module.exports = ({ inlineChunk, version, build }) => (context) => {
         .plugin('EnvScriptHtmlPlugin')
         .use(require('../internal/EnvScriptHtmlPlugin'), [HtmlWebpackPlugin])
         .end()
-        .plugin('InjectVersionHtmlPlugin')
-        .use(require('../internal/InjectVersionHtmlPlugin'), [{ version, build }])
-        .end();
+        .when(context.options.isEnvProduction, (config) => {
+            config
+                .plugin('InjectVersionHtmlPlugin')
+                .use(require('../internal/InjectVersionHtmlPlugin'), [{ version, build }])
+                .end();
+        });
+
     return context;
 };
