@@ -19,7 +19,7 @@ class WebpackFinalConfig {
         const userConfig = require(this.configPath);
 
         this.config = userConfig;
-
+        this._buildVersion = scriptsArgs.version;
         this.extensions = extensions;
 
         this.middlewareMap = new Map();
@@ -62,7 +62,9 @@ class WebpackFinalConfig {
                     return env;
                 },
                 {
-                    NODE_ENV: process.env.NODE_ENV || 'development'
+                    NODE_ENV: process.env.NODE_ENV || 'development',
+                    APP_VERSION: this._buildVersion,
+                    APP_NAME: process.env.npm_package_name
                     // PUBLIC_URL: publicUrl
                 }
             );
