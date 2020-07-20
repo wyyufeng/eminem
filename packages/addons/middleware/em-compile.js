@@ -1,4 +1,4 @@
-module.exports = function ({ language, useTypeScript, ...others }) {
+module.exports = function ({ language, ...others }) {
     return (context) => {
         context.module
 
@@ -12,15 +12,7 @@ module.exports = function ({ language, useTypeScript, ...others }) {
                 cacheDirectory: true,
                 cacheCompression: false,
                 compact: context.options.isEnvProduction,
-                presets: [
-                    [
-                        require('@eminemjs/babel-preset'),
-                        {
-                            react: language === 'javascriptreact',
-                            useTypeScript
-                        }
-                    ]
-                ],
+                presets: [require.resolve('@eminemjs/babel-preset')],
                 ...others
             });
 
