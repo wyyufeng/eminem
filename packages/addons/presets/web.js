@@ -134,7 +134,7 @@ const web = (opts = {}) => {
                 name: 'static/[name].[ext]'
             },
             ignore: [/^\.\/locale$/, /moment$/],
-            devtool: (env) => (env === 'production' ? 'cheap-module-source-map' : 'source-map'),
+            devtool: (env) => (env === 'production' ? 'source-map' : 'cheap-module-source-map'),
             devServer: {
                 publicPath: '/'
             },
