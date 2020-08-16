@@ -41,5 +41,5 @@
     "webpack-dev-server": "^3.10.3",
     "webpack-format-messages": "^2.0.6"
   },
-  "gitHead": "15b23c01c763f3bf18ca9f5035f8c88a1e1781e4"
+  "gitHead": "81be0c88744e256016f3fdbcf6ac8eb65c1db508"
 }
