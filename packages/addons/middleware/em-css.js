@@ -1,17 +1,16 @@
-module.exports = ({ publicPath, postcss, filename, chunkFilename, ...others }) => (context) => {
-    // console.log(context.module.rule('module').oneOf('normal').rule);
+module.exports = () => (context) => {
     context.module
 
         .rule('css')
-        .test(context.getRegexFromExt('css'))
+        .test(/\.css$/)
         .when(
-            context.options.isEnvProduction,
+            context.isEnvProduction,
             (config) => {
                 config
                     .use('mini-css')
                     .loader(require.resolve('mini-css-extract-plugin/dist/loader'))
                     .options({
-                        publicPath
+                        publicPath: '../'
                     })
                     .end();
 
@@ -19,9 +18,12 @@ module.exports = ({ publicPath, postcss, filename, chunkFilename, ...others }) =
                     .plugin('MiniCssPlugin')
                     .use(require.resolve('mini-css-extract-plugin'), [
                         {
-                            filename: filename(context.NODE_ENV),
-                            chunkFilename: chunkFilename(context.NODE_ENV),
-                            ...others
+                            filename: context.isEnvProduction
+                                ? 'css/[name].[contenthash:8].css'
+                                : 'css/[name].css',
+                            chunkFilename: context.isEnvProduction
+                                ? 'css/[name].[contenthash:8].chunk.css'
+                                : 'css/[name].chunk.css'
                         }
                     ])
                     .end();
@@ -34,13 +36,13 @@ module.exports = ({ publicPath, postcss, filename, chunkFilename, ...others }) =
         .loader(require.resolve('css-loader'))
         .options({
             importLoaders: 1,
-            sourceMap: context.options.shouldUseSourceMap
+            sourceMap: context.config.shouldUseSourceMap
         })
         .end()
         .use('postcss')
         .loader(require.resolve('postcss-loader'))
         .options({
-            sourceMap: context.options.shouldUseSourceMap,
+            sourceMap: context.config.shouldUseSourceMap,
             ident: 'postcss',
             plugins: () => {
                 return [
@@ -53,8 +55,7 @@ module.exports = ({ publicPath, postcss, filename, chunkFilename, ...others }) =
                     }),
                     require('postcss-normalize')()
                 ];
-            },
-            ...postcss
+            }
         })
         .end();
 

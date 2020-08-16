@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const Context = require('./Context');
-const extensions = require('./extensions');
+// const extensions = require('./extensions');
 const appDirectory = fs.realpathSync(process.cwd());
 const resolvePath = (relativePath) => {
     return path.resolve(appDirectory, relativePath);
@@ -10,38 +10,21 @@ const resolvePath = (relativePath) => {
 const isFunction = (source) => typeof source === 'function';
 class WebpackFinalConfig {
     constructor(scriptsArgs) {
-        const NODE_ENV = process.env.NODE_ENV;
-        if (!NODE_ENV) {
-            throw new Error('The NODE_ENV environment variable is required but was not specified.');
-        }
-        this.NODE_ENV = NODE_ENV;
+        this.NODE_ENV = scriptsArgs.NODE_ENV;
         this.configPath = resolvePath('.emrc.js');
         const userConfig = require(this.configPath);
 
         this.config = userConfig;
         this._buildVersion = scriptsArgs.version;
-        this.extensions = extensions;
 
         this.middlewareMap = new Map();
         const paths = this.setupPaths();
-        const contextOptions = {
-            paths: paths,
-            env: this.parseEnv(paths),
-            apps: userConfig.apps,
-            shouldUseSourceMap: userConfig.sourceMap,
-            strict: typeof userConfig.strict === 'undefined' ? true : userConfig.strict,
-            ...scriptsArgs
-        };
-        this.context = new Context(
-            NODE_ENV,
-            contextOptions,
-            contextOptions.paths,
-            extensions,
-            contextOptions.env
-        );
+        const env = this.parseEnv(paths.dotEnv);
+        this.config = Object.assign(this.config, { env: env }, scriptsArgs);
+        this.context = new Context(this.NODE_ENV, paths, this.config, this._buildVersion);
     }
-    parseEnv(paths) {
-        const dotenvFiles = [`${paths.dotEnv}.${this.NODE_ENV}`].filter(Boolean);
+    parseEnv(dotEnvPath) {
+        const dotenvFiles = [`${dotEnvPath}.${this.NODE_ENV}`].filter(Boolean);
         dotenvFiles.forEach((dotenvFile) => {
             if (fs.existsSync(dotenvFile)) {
                 require('dotenv-expand')(
@@ -65,7 +48,6 @@ class WebpackFinalConfig {
                     NODE_ENV: process.env.NODE_ENV || 'development',
                     APP_VERSION: this._buildVersion,
                     APP_NAME: process.env.npm_package_name
-                    // PUBLIC_URL: publicUrl
                 }
             );
         const stringified = {

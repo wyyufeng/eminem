@@ -17,16 +17,15 @@ process.on('unhandledRejection', (err) => {
 });
 const { WebpackFinalConfig } = require('@eminemjs/core');
 const createCompiler = require('../util/createCompiler');
-const options = {};
-function setupOptions() {
-    options.isEnvProduction = true;
-    options.isEnvDevelopment = false;
-    options.version = version.nextVersion();
+const args = {};
+function setupArgs() {
+    args.NODE_ENV = process.env.NODE_ENV;
+    args.version = version.nextVersion();
 }
-setupOptions();
+setupArgs();
 
 function build() {
-    const webpackFinalCompiler = new WebpackFinalConfig(options);
+    const webpackFinalCompiler = new WebpackFinalConfig(args);
     const finalConfig = webpackFinalCompiler.toWebpack();
     const compiler = createCompiler(finalConfig);
     console.log(chalk.blueBright('start building...'));

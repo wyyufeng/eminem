@@ -1,6 +1,6 @@
-module.exports = (opts) => (context) => {
+module.exports = () => (context) => {
     context.when(
-        context.options.isEnvProduction,
+        context.isEnvProduction,
         (config) => {
             config.bail = true;
             context.mode('production');

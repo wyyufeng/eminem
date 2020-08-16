@@ -1,7 +1,7 @@
-module.exports = (opts) => (context) => {
+module.exports = () => (context) => {
     context
         .plugin('IgnorePlugin')
-        .use(require.resolve('webpack/lib/IgnorePlugin'), [...opts])
+        .use(require.resolve('webpack/lib/IgnorePlugin'), [/^\.\/locale$/, /moment$/])
         .end();
     return context;
 };

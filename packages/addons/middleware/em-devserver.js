@@ -1,22 +1,22 @@
-module.exports = ({ publicPath, proxy }) => (context) => {
+module.exports = () => (context) => {
     context.devServer
         .historyApiFallback({
             disableDotRule: true
         })
         .disableHostCheck(true)
         .compress(true)
-        .clientLogLevel('none')
+        .clientLogLevel('silent')
         .contentBase(context.paths.appPublic)
-        .publicPath(publicPath)
+        .publicPath('/')
         .watchContentBase(true)
         .hot(true)
-        .host(context.options.host)
-        .port(context.options.port)
-        .overlay(false)
+        .host(context.config.host)
+        .port(context.config.port)
+        .overlay(true)
         .quiet(true)
         .open(true)
         .useLocalIp(true)
-        .public(context.options.urls.lanUrl);
+        .public(context.config.urls.lanUrl);
 
     return context;
 };

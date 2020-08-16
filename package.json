@@ -2,6 +2,7 @@
   "name": "eminem",
   "private": true,
   "devDependencies": {
+    "eslint": "^7.6.0",
     "lerna": "^3.18.4"
   },
   "dependencies": {

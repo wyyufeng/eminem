@@ -1,5 +1,5 @@
 module.exports = () => (context) => {
-    context.options.apps.forEach((app) => {
+    context.config.apps.forEach((app) => {
         const entryCtx = context.entry(app.name);
         if (Array.isArray(app.entry)) {
             app.entry.forEach((entry) => entryCtx.add(entry));

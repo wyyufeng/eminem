@@ -1,12 +1,21 @@
-const resolve = require('resolve');
+const typescriptFormatter = require('react-dev-utils/typescriptFormatter');
 module.exports = () => (context) => {
     context
         .plugin('ForkTsChecker')
         .use(require.resolve('fork-ts-checker-webpack-plugin'), [
             {
-                typescript: resolve.sync('typescript', {
-                    basedir: context.paths.nodeModules
-                })
+                typescript: {
+                    diagnosticOptions: {
+                        semantic: true,
+                        syntactic: true
+                    }
+                },
+                eslint: {
+                    enabled: true,
+                    files: './src/**/*.{ts,tsx,js,jsx}'
+                },
+
+                formatter: context.isEnvProduction ? typescriptFormatter : undefined
             }
         ])
         .end();

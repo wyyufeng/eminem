@@ -6,7 +6,7 @@ process.env.NODE_ENV = 'development';
 process.on('unhandledRejection', (err) => {
     throw err;
 });
-
+const logSymbols = require('log-symbols');
 const { WebpackFinalConfig } = require('@eminemjs/core');
 const formatMessages = require('webpack-format-messages');
 const WebpackDevServer = require('webpack-dev-server');
@@ -15,19 +15,23 @@ const createCompiler = require('../util/createCompiler');
 const { formatAddress } = require('../util/formatAddress');
 const clearConsole = require('../util/clearConsole');
 const chalk = require('chalk');
-const options = {};
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+
+const version = require('../util/version');
+
+const args = {};
 const port = 3000;
 const host = '0.0.0.0';
 const protocol = 'http';
 
-function setupOptions() {
-    options.port = port;
-    options.host = host;
-    options.isEnvProduction = false;
-    options.isEnvDevelopment = true;
+function setupArgs() {
+    args.port = port;
+    args.host = host;
+    args.NODE_ENV = process.env.NODE_ENV;
+    args.version = version.current();
 }
 
-setupOptions();
+setupArgs();
 
 portfinder.getPortPromise({ host, port }).then((p) => {
     if (p == null) {
@@ -37,39 +41,35 @@ portfinder.getPortPromise({ host, port }).then((p) => {
         console.warn(`\n The port ${port} is busy and will fallback to ${p}`);
     }
     const urls = formatAddress(p, protocol);
-    options.port = p;
-    options.urls = urls;
-    options.protocol = protocol;
-    const webpackFinalCompiler = new WebpackFinalConfig(options);
+    args.port = p;
+    args.urls = urls;
+    args.protocol = protocol;
+    const webpackFinalCompiler = new WebpackFinalConfig(args);
     const finalConfig = webpackFinalCompiler.toWebpack();
     const compiler = createCompiler(finalConfig);
-    let isFirstCompile = true;
     const devServerOptions = finalConfig.devServer;
 
     delete finalConfig.devServer;
-    const devServer = new WebpackDevServer(compiler, devServerOptions);
+    let isFirstCompile = true;
 
-    compiler.hooks.invalid.tap('invalid', function () {
-        clearConsole();
-        console.log('Compiling...');
-    });
+    const devServer = new WebpackDevServer(compiler, devServerOptions);
 
     compiler.hooks.done.tap('done', (stats) => {
         clearConsole();
         const messages = formatMessages(stats);
         const isSuccessful = !messages.errors.length && !messages.warnings.length;
         if (isSuccessful) {
-            console.log(chalk.greenBright('Compiled successfully!'));
+            console.log(logSymbols.success, chalk.greenBright('Compiled successfully!'));
         }
 
         if (messages.errors.length) {
-            console.log(chalk.redBright('Failed to compile.'));
+            console.log(logSymbols.error, chalk.redBright('Failed to compile.'));
             messages.errors.forEach((e) => console.log(e));
             return;
         }
 
         if (messages.warnings.length) {
-            console.log(chalk.yellowBright('Compiled with warnings.'));
+            console.log(logSymbols.warning, chalk.yellowBright('Compiled with warnings.'));
             messages.warnings.forEach((w) => console.log(w));
         }
         if (isFirstCompile && isSuccessful) {

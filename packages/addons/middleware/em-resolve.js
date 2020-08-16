@@ -1,8 +1,21 @@
+const moduleFileExtensions = [
+    'web.mjs',
+    'mjs',
+    'web.js',
+    'js',
+    'web.ts',
+    'ts',
+    'web.tsx',
+    'tsx',
+    'json',
+    'web.jsx',
+    'jsx'
+];
 module.exports = (opts = { alias: {} }) => (context) => {
     context.resolve.modules.values('node_modules');
 
-    Object.keys(context.extensions).forEach((key) => {
-        context.extensions[key].forEach((ext) => context.resolve.extensions.add(`.${ext}`));
+    moduleFileExtensions.forEach((ext) => {
+        context.resolve.extensions.add(`.${ext}`);
     });
     const alias = { ...opts.alias };
     for (let [key, value] of Object.entries(alias)) {

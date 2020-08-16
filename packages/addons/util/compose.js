@@ -3,4 +3,9 @@ function compose(middlewares = []) {
         return (ctx) => a(b(ctx));
     });
 }
-module.exports = compose;
+
+function createLoaderRegExp(exts) {
+    return new RegExp(String.raw`\.(${exts.join('|')})$`);
+}
+
+module.exports = { compose, createLoaderRegExp };

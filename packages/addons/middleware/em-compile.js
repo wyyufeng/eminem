@@ -1,9 +1,9 @@
-module.exports = function ({ language, ...others }) {
+module.exports = function () {
     return (context) => {
         context.module
 
-            .rule('compile')
-            .test(context.getRegexFromExt(language))
+            .rule('babel')
+            .test(/\.(js|mjs|jsx|ts|tsx)$/)
             .include.add(context.paths.appSource)
             .end()
             .use('babel-loader')
@@ -11,9 +11,8 @@ module.exports = function ({ language, ...others }) {
             .options({
                 cacheDirectory: true,
                 cacheCompression: false,
-                compact: context.options.isEnvProduction,
-                presets: [require.resolve('@eminemjs/babel-preset')],
-                ...others
+                compact: context.isEnvProduction,
+                presets: [require.resolve('@eminemjs/babel-preset')]
             });
 
         return context;

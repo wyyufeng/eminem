@@ -1,11 +1,12 @@
 const path = require('path');
-module.exports = (opts) => (context) => {
+const isImage = require('is-image');
+module.exports = (publicPath) => (context) => {
     context
         .plugin('ManifestPlugin')
         .use(require.resolve('webpack-manifest-plugin'), [
             {
-                fileName: `assets-manifest.v${context.options.version}.json`,
-                publicPath: context.options.appPublic,
+                fileName: `assets-manifest.v${context.buildVersion}.json`,
+                publicPath: publicPath,
                 seed: {
                     build_version: '',
                     build_time: '',
@@ -25,7 +26,7 @@ module.exports = (opts) => (context) => {
                             manifest['sourceMaps'][basename] = file.path;
                             return manifest;
                         }
-                        if (context.extensions.image.includes(ext.substr(1))) {
+                        if (isImage(file.path)) {
                             manifest['image'][basename] = file.path;
                             return manifest;
                         }
@@ -44,7 +45,7 @@ module.exports = (opts) => (context) => {
                         manifest['others'][basename] = file.path;
                         return manifest;
                     }, seed);
-                    manifestFiles.build_version = context.options.version;
+                    manifestFiles.build_version = context.buildVersion;
                     manifestFiles.build_time = new Date().toLocaleString();
                     manifestFiles.build_user = require('os').userInfo().username;
                     return manifestFiles;

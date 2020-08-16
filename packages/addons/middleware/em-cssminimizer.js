@@ -1,12 +1,12 @@
-module.exports = (opts) => (context) => {
+module.exports = () => (context) => {
     context.optimization
-        .minimize(context.options.isEnvProduction)
+        .minimize(context.isEnvProduction)
         .minimizer('css')
         .use(require.resolve('optimize-css-assets-webpack-plugin'), [
             {
                 cssProcessorOptions: {
                     parser: require('postcss-safe-parser'),
-                    map: context.options.shouldUseSourceMap
+                    map: context.config.shouldUseSourceMap
                         ? {
                               inline: false,
                               annotation: true

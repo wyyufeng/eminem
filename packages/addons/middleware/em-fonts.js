@@ -1,12 +1,11 @@
 module.exports = () => (context) => {
     context.module
 
-        .rule('image')
-        .test([/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/])
-        .use('url-loader')
-        .loader(require.resolve('url-loader'))
+        .rule('fonts')
+        .test(/\.(woff|woff2|eot|ttf|otf)$/)
+        .use('file-loader')
+        .loader(require.resolve('file-loader'))
         .options({
-            limit: 8192,
             name: context.isEnvProduction ? 'assets/[name].[hash:8].[ext]' : 'assets/[name].[ext]'
         })
         .end();

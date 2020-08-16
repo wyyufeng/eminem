@@ -1,6 +1,6 @@
 module.exports = () => (context) => {
     context.optimization
-        .minimize(context.options.isEnvProduction)
+        .minimize(context.isEnvProduction)
         .minimizer('TerserPlugin')
         .use(require.resolve('terser-webpack-plugin'), [
             {
@@ -23,8 +23,7 @@ module.exports = () => (context) => {
                         ascii_only: true
                     }
                 },
-                cache: true,
-                sourceMap: context.options.shouldUseSourceMap
+                sourceMap: context.config.shouldUseSourceMap
             }
         ])
         .end();
