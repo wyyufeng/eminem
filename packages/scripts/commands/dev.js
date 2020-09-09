@@ -15,19 +15,18 @@ const createCompiler = require('../util/createCompiler');
 const { formatAddress } = require('../util/formatAddress');
 const clearConsole = require('../util/clearConsole');
 const chalk = require('chalk');
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const argv = require('yargs-parser')(process.argv.slice(2));
 
 const version = require('../util/version');
 
 const args = {};
-const port = 3000;
+const port = argv.port || 3000;
 const host = '0.0.0.0';
 const protocol = 'http';
 
 function setupArgs() {
     args.port = port;
     args.host = host;
-    args.NODE_ENV = process.env.NODE_ENV;
     args.version = version.current();
 }
 

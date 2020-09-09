@@ -39,7 +39,8 @@
     "webpack": "^4.43.0",
     "webpack-bundle-analyzer": "^3.8.0",
     "webpack-dev-server": "^3.10.3",
-    "webpack-format-messages": "^2.0.6"
+    "webpack-format-messages": "^2.0.6",
+    "yargs-parser": "^19.0.1"
   },
   "gitHead": "81be0c88744e256016f3fdbcf6ac8eb65c1db508"
 }

@@ -19,7 +19,6 @@ const { WebpackFinalConfig } = require('@eminemjs/core');
 const createCompiler = require('../util/createCompiler');
 const args = {};
 function setupArgs() {
-    args.NODE_ENV = process.env.NODE_ENV;
     args.version = version.nextVersion();
 }
 setupArgs();

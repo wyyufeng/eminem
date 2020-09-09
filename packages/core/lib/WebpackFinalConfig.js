@@ -1,7 +1,6 @@
 const fs = require('fs');
 const path = require('path');
 const Context = require('./Context');
-// const extensions = require('./extensions');
 const appDirectory = fs.realpathSync(process.cwd());
 const resolvePath = (relativePath) => {
     return path.resolve(appDirectory, relativePath);
@@ -10,7 +9,7 @@ const resolvePath = (relativePath) => {
 const isFunction = (source) => typeof source === 'function';
 class WebpackFinalConfig {
     constructor(scriptsArgs) {
-        this.NODE_ENV = scriptsArgs.NODE_ENV;
+        this.NODE_ENV = process.env.NODE_ENV;
         this.configPath = resolvePath('.emrc.js');
         const userConfig = require(this.configPath);
 
