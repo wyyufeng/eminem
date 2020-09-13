@@ -1,5 +1,6 @@
+'use strict';
 const webpack = require('webpack');
-function createCompiler(finalConfig) {
+function createBuildCompiler(finalConfig) {
     let compiler;
     try {
         compiler = webpack(finalConfig);
@@ -11,4 +12,4 @@ function createCompiler(finalConfig) {
     return compiler;
 }
 
-module.exports = createCompiler;
+module.exports = createBuildCompiler;

@@ -8,6 +8,7 @@
   "dependencies": {
     "@types/fs-extra": "^8.1.0",
     "global": "^4.4.0",
-    "npm-check": "^5.9.2"
+    "npm-check": "^5.9.2",
+    "react-dates": "^21.8.0"
   }
 }

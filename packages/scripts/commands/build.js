@@ -1,22 +1,23 @@
+'use strict';
+process.on('unhandledRejection', (err) => {
+    throw err;
+});
 process.env.BABEL_ENV = 'production';
 process.env.NODE_ENV = 'production';
 const chalk = require('chalk');
 const fs = require('fs-extra');
 const path = require('path');
-const formatMessages = require('webpack-format-messages');
+const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages');
 const flatten = require('array-flatten').flatten;
 const filesize = require('filesize');
 const gzipSize = require('gzip-size');
 const version = require('../util/version');
-const clearConsole = require('../util/clearConsole');
+const clearConsole = require('react-dev-utils/clearConsole');
 
 const WARN_AFTER_BUNDLE_SIZE = 250 * 1024; //kb
 
-process.on('unhandledRejection', (err) => {
-    throw err;
-});
-const { WebpackFinalConfig } = require('@eminemjs/core');
-const createCompiler = require('../util/createCompiler');
+const WebpackFinalConfig = require('../core/WebpackFinalConfig');
+const createBuildCompiler = require('../util/createBuildCompiler');
 const args = {};
 function setupArgs() {
     args.NODE_ENV = process.env.NODE_ENV;
@@ -25,9 +26,9 @@ function setupArgs() {
 setupArgs();
 
 function build() {
-    const webpackFinalCompiler = new WebpackFinalConfig(args);
-    const finalConfig = webpackFinalCompiler.toWebpack();
-    const compiler = createCompiler(finalConfig);
+    const webpackFinalConfig = new WebpackFinalConfig(args);
+    const finalConfig = webpackFinalConfig.toWebpack();
+    const compiler = createBuildCompiler(finalConfig);
     console.log(chalk.blueBright('start building...'));
 
     compiler.run((err, stats) => {
@@ -37,13 +38,13 @@ function build() {
             console.log(err);
             process.exit(1);
         }
-        const messages = formatMessages(stats);
+        const messages = formatWebpackMessages(stats);
         if (stats.hasErrors()) {
             console.log(chalk.redBright('Failed to build.'));
             messages.errors.forEach((e) => console.log(e));
             return;
         }
-        printFileSize(webpackFinalCompiler.context.paths.appOutput);
+        printFileSize(webpackFinalConfig.paths.appOutput);
         version.incBuildVersion();
         console.log('build complete！(oﾟ▽ﾟ)o  ');
 

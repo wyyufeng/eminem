@@ -26,20 +26,18 @@
     "url": "https://github.com/wyyufeng/eminem/issues"
   },
   "dependencies": {
-    "@eminemjs/core": "",
-    "address": "^1.1.2",
     "array-flatten": "^3.0.0",
     "chalk": "^4.0.0",
     "cross-spawn": "^7.0.2",
     "filesize": "^6.1.0",
     "fs-extra": "^9.0.0",
     "gzip-size": "^5.1.1",
-    "log-symbols": "^4.0.0",
-    "portfinder": "^1.0.26",
+    "is-root": "^2.1.0",
+    "react-dev-utils": "^10.2.1",
     "webpack": "^4.43.0",
     "webpack-bundle-analyzer": "^3.8.0",
     "webpack-dev-server": "^3.10.3",
-    "webpack-format-messages": "^2.0.6"
+    "yargs-parser": "^20.0.0"
   },
   "gitHead": "81be0c88744e256016f3fdbcf6ac8eb65c1db508"
 }

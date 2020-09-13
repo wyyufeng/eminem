@@ -9,18 +9,18 @@ const resolvePath = (relativePath) => {
 
 const isFunction = (source) => typeof source === 'function';
 class WebpackFinalConfig {
-    constructor(scriptsArgs) {
+    constructor(scriptsOptions) {
         this.configPath = resolvePath('.emrc.js');
         const userConfig = require(this.configPath);
 
-        this.config = userConfig;
-        this._buildVersion = scriptsArgs.version;
+        this.userConfig = userConfig;
+        this.options = scriptsOptions;
 
         this.middlewareMap = new Map();
-        const paths = this.setupPaths();
-        const env = this.parseEnv(paths.dotEnv);
-        this.config = Object.assign(this.config, { env: env }, scriptsArgs);
-        this.context = new Context(process.env.NODE_ENV, paths, this.config, this._buildVersion);
+        this.paths = this.setupPaths();
+        const env = this.parseEnv(this.paths.dotEnv);
+        const config = Object.assign(this.config, { env: env }, scriptsOptions);
+        this.context = new Context(process.env.NODE_ENV, this.paths, config);
     }
     parseEnv(dotEnvPath) {
         const dotenvFiles = [`${dotEnvPath}.${process.env.NODE_ENV}`].filter(Boolean);
@@ -45,8 +45,8 @@ class WebpackFinalConfig {
                 },
                 {
                     NODE_ENV: process.env.NODE_ENV || 'development',
-                    APP_VERSION: this._buildVersion,
-                    APP_NAME: process.env.npm_package_name
+                    APP_VERSION: this.options.version,
+                    APP_NAME: this.options.appName
                 }
             );
         const stringified = {
@@ -68,19 +68,9 @@ class WebpackFinalConfig {
         paths.appOutput = resolvePath('build');
         paths.nodeModules = resolvePath('node_modules');
         paths.dotEnv = resolvePath('.env');
+        paths.yarnLockFile = resolvePath('yarn.lock');
+        paths.tsConfig = resolvePath('tsconfig.json');
         return paths;
-    }
-    getRegexFromExt(type) {
-        if (typeof type === 'undefined') {
-            return Object.keys(this.extensions).map((_type) => {
-                return this.getRegexFromExt(_type);
-            });
-        }
-        const extensions = this.extensions[type];
-        if (extensions.length === 1) {
-            return new RegExp(String.raw`\.${extensions[0]}$`);
-        }
-        return new RegExp(String.raw`\.(${extensions.join('|')})$`);
     }
     computeFinalContext() {
         const { use } = this.config;
@@ -99,6 +89,7 @@ class WebpackFinalConfig {
             }
         } catch (error) {
             console.error('\nAn error occurred when loading the middleware.\n');
+            console.log();
             console.error(error);
             process.exit(1);
         }

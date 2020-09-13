@@ -6,89 +6,70 @@ process.env.NODE_ENV = 'development';
 process.on('unhandledRejection', (err) => {
     throw err;
 });
-const logSymbols = require('log-symbols');
-const { WebpackFinalConfig } = require('@eminemjs/core');
-const formatMessages = require('webpack-format-messages');
+const fs = require('fs');
+const WebpackFinalConfig = require('../core/WebpackFinalConfig');
+const {
+    choosePort,
+    createCompiler,
+    prepareUrls
+} = require('react-dev-utils/WebpackDevServerUtils');
 const WebpackDevServer = require('webpack-dev-server');
-const portfinder = require('portfinder');
-const createCompiler = require('../util/createCompiler');
-const { formatAddress } = require('../util/formatAddress');
-const clearConsole = require('../util/clearConsole');
 const chalk = require('chalk');
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
-
+const argv = require('yargs-parser')(process.argv.slice(2));
+const webpack = require('webpack');
 const version = require('../util/version');
 
-const args = {};
-const port = 3000;
+const options = {};
+const defaultPort = argv.port || 3000;
 const host = '0.0.0.0';
 const protocol = 'http';
 
-function setupArgs() {
-    args.port = port;
-    args.host = host;
-    args.NODE_ENV = process.env.NODE_ENV;
-    args.version = version.current();
+function setupOptions() {
+    options.port = defaultPort;
+    options.host = host;
+    options.version = version.current();
+    options.appName = process.env.npm_package_name || 'web_app';
+    options.tscError = argv.tscerror || true;
 }
 
-setupArgs();
+setupOptions();
 
-portfinder.getPortPromise({ host, port }).then((p) => {
-    if (p == null) {
-        return console.error('\n no free port');
-    }
-    if (port !== p) {
-        console.warn(`\n The port ${port} is busy and will fallback to ${p}`);
-    }
-    const urls = formatAddress(p, protocol);
-    args.port = p;
-    args.urls = urls;
-    args.protocol = protocol;
-    const webpackFinalCompiler = new WebpackFinalConfig(args);
-    const finalConfig = webpackFinalCompiler.toWebpack();
-    const compiler = createCompiler(finalConfig);
-    const devServerOptions = finalConfig.devServer;
+choosePort(host, defaultPort).then((port) => {
+    options.port = port;
+    options.protocol = protocol;
+    const urls = prepareUrls(options.protocol, options.host, options.port);
+    options.urls = urls;
+
+    const webpackFinalConfig = new WebpackFinalConfig(options);
+    const useYarn = fs.existsSync(webpackFinalConfig.paths.yarnLockFile);
+    const useTypeScript = fs.existsSync(webpackFinalConfig.paths.tsConfig);
+
+    const finalConfig = webpackFinalConfig.toWebpack();
+
+    const devSocket = {
+        warnings: (warnings) => devServer.sockWrite(devServer.sockets, 'warnings', warnings),
+        errors: (errors) => devServer.sockWrite(devServer.sockets, 'errors', errors)
+    };
+    const compiler = createCompiler({
+        appName: options.appName,
+        config: finalConfig,
+        devSocket,
+        urls: options.urls,
+        useYarn,
+        useTypeScript,
+        tscCompileOnError: options.tscError,
+        webpack
+    });
+    const devServerConfig = finalConfig.devServer;
 
     delete finalConfig.devServer;
-    let isFirstCompile = true;
 
-    const devServer = new WebpackDevServer(compiler, devServerOptions);
+    const devServer = new WebpackDevServer(compiler, devServerConfig);
 
-    compiler.hooks.done.tap('done', (stats) => {
-        clearConsole();
-        const messages = formatMessages(stats);
-        const isSuccessful = !messages.errors.length && !messages.warnings.length;
-        if (isSuccessful) {
-            console.log(logSymbols.success, chalk.greenBright('Compiled successfully!'));
-        }
-
-        if (messages.errors.length) {
-            console.log(logSymbols.error, chalk.redBright('Failed to compile.'));
-            messages.errors.forEach((e) => console.log(e));
-            return;
-        }
-
-        if (messages.warnings.length) {
-            console.log(logSymbols.warning, chalk.yellowBright('Compiled with warnings.'));
-            messages.warnings.forEach((w) => console.log(w));
-        }
-        if (isFirstCompile && isSuccessful) {
-            console.log();
-            console.log(`You can now view your application in the browser.`);
-            console.log();
-
-            console.log(`  ${chalk.bold('Local:')}            ${urls.localUrl}`);
-            console.log(`  ${chalk.bold('On Your Network:')}  ${urls.lanUrl}`);
-
-            console.log();
-        }
-        isFirstCompile = false;
-    });
-
-    devServer.listen(p, host, (err) => {
+    devServer.listen(port, host, (err) => {
         if (err) {
             return console.log(err);
         }
-        console.log(`${chalk.blueBright('The dev server is starting...')}`);
+        console.log(chalk.cyan('Starting the development server...\n'));
     });
 });
