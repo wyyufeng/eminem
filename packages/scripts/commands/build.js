@@ -20,7 +20,6 @@ const WebpackFinalConfig = require('../core/WebpackFinalConfig');
 const createBuildCompiler = require('../util/createBuildCompiler');
 const args = {};
 function setupArgs() {
-    args.NODE_ENV = process.env.NODE_ENV;
     args.version = version.nextVersion();
 }
 setupArgs();

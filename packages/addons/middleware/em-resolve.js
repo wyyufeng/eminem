@@ -17,7 +17,10 @@ module.exports = (opts = { alias: {} }) => (context) => {
     moduleFileExtensions.forEach((ext) => {
         context.resolve.extensions.add(`.${ext}`);
     });
-    const alias = { ...opts.alias };
+    const alias = {
+        '@': context.paths.appSource,
+        ...opts.alias
+    };
     for (let [key, value] of Object.entries(alias)) {
         context.resolve.alias.set(key, value);
     }
