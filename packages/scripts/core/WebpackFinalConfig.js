@@ -9,7 +9,7 @@ const resolvePath = (relativePath) => {
 
 const isFunction = (source) => typeof source === 'function';
 class WebpackFinalConfig {
-    constructor(scriptsOptions) {
+    constructor(scriptsOptions, paths) {
         this.configPath = resolvePath('.emrc.js');
         const userConfig = require(this.configPath);
 
@@ -17,9 +17,9 @@ class WebpackFinalConfig {
         this.options = scriptsOptions;
 
         this.middlewareMap = new Map();
-        this.paths = this.setupPaths();
+        this.paths = paths;
         const env = this.parseEnv(this.paths.dotEnv);
-        const config = Object.assign(this.config, { env: env }, scriptsOptions);
+        const config = Object.assign(this.userConfig, { env: env }, scriptsOptions);
         this.context = new Context(process.env.NODE_ENV, this.paths, config);
     }
     parseEnv(dotEnvPath) {
@@ -61,19 +61,9 @@ class WebpackFinalConfig {
             stringified
         };
     }
-    setupPaths() {
-        const paths = {};
-        paths.appSource = resolvePath('src');
-        paths.appPublic = resolvePath('public');
-        paths.appOutput = resolvePath('build');
-        paths.nodeModules = resolvePath('node_modules');
-        paths.dotEnv = resolvePath('.env');
-        paths.yarnLockFile = resolvePath('yarn.lock');
-        paths.tsConfig = resolvePath('tsconfig.json');
-        return paths;
-    }
+
     computeFinalContext() {
-        const { use } = this.config;
+        const { use } = this.userConfig;
 
         // 如果是函数，将重写整个context
         try {

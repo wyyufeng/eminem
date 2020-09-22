@@ -1,10 +1,10 @@
+'use strict';
 const web = require('./web');
 const svg = require('../middleware/em-svgr');
 
-const react = (options = { useTypeScript: false, publicPath: '/', svgr: true }) => (context) => {
-    const { useTypeScript, publicPath, svgr } = Object.assign(
+const react = (options = { publicPath: '/', svgr: true }) => (context) => {
+    const { publicPath, svgr } = Object.assign(
         {
-            useTypeScript: false,
             publicPath: '/',
             svgr: true
         },
@@ -12,7 +12,6 @@ const react = (options = { useTypeScript: false, publicPath: '/', svgr: true }) 
     );
 
     web({
-        useTypeScript,
         publicPath
     })(context);
     if (svgr) {

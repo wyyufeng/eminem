@@ -1,3 +1,4 @@
+'use strict';
 const entry = require('../middleware/em-entry');
 const output = require('../middleware/em-output');
 const compile = require('../middleware/em-compile');
@@ -20,7 +21,6 @@ const jsminimizer = require('../middleware/em-jsminimizer');
 const clean = require('../middleware/em-clean');
 const splitChunks = require('../middleware/em-splitchunks');
 const resolve = require('../middleware/em-resolve');
-// const errorOverlay = require('../middleware/em-overlay');
 const progress = require('../middleware/em-progress');
 const emmodule = require('../middleware/em-module');
 const forktschecker = require('../middleware/em-forktschecker');
@@ -28,18 +28,15 @@ const { compose } = require('../util/compose');
 const { join } = require('path');
 
 /**
- *
- * @param {boolean} useTypeScript - 是否启用typescript
  * @param {string} publicPath  - publicPath
  */
 const web = (
-    { useTypeScript, publicPath } = {
-        useTypeScript: false,
+    { publicPath } = {
         publicPath: '/'
     }
 ) => {
     return (context) => {
-        const { apps } = context.config;
+        const { apps, useTypescript } = context.config;
         const isEnvProduction = context.isEnvProduction;
         const { appSource } = context.paths;
         // 解析入口文件地址，如果在开发环境下加入热更新代码
@@ -73,9 +70,8 @@ const web = (
             clean(),
             devtool(),
             other(),
-            useTypeScript && forktschecker(),
+            useTypescript && forktschecker(),
             isEnvProduction && progress(),
-            // !isEnvProduction && errorOverlay(),
             !isEnvProduction && devServer(),
             isEnvProduction && jsminimizer(),
             isEnvProduction && cssminimizer(),

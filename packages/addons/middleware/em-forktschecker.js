@@ -1,20 +1,19 @@
+'use strict';
 const typescriptFormatter = require('react-dev-utils/typescriptFormatter');
+
 module.exports = () => (context) => {
     context
         .plugin('ForkTsChecker')
         .use(require.resolve('fork-ts-checker-webpack-plugin'), [
             {
+                async: context.isEnvDevelopment,
                 typescript: {
                     diagnosticOptions: {
                         semantic: true,
                         syntactic: true
-                    }
+                    },
+                    configFile: context.paths.tsConfig
                 },
-                eslint: {
-                    enabled: true,
-                    files: './src/**/*.{ts,tsx,js,jsx}'
-                },
-
                 formatter: context.isEnvProduction ? typescriptFormatter : undefined
             }
         ])

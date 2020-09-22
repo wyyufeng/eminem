@@ -1,3 +1,4 @@
+'use strict';
 module.exports = function () {
     return (context) => {
         context.module
@@ -11,8 +12,7 @@ module.exports = function () {
             .options({
                 cacheDirectory: true,
                 cacheCompression: false,
-                compact: context.isEnvProduction,
-                presets: [require.resolve('@eminemjs/babel-preset')]
+                compact: context.isEnvProduction
             });
 
         return context;

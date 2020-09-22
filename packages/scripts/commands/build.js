@@ -4,6 +4,7 @@ process.on('unhandledRejection', (err) => {
 });
 process.env.BABEL_ENV = 'production';
 process.env.NODE_ENV = 'production';
+const paths = require('../core/paths');
 const chalk = require('chalk');
 const fs = require('fs-extra');
 const path = require('path');
@@ -18,14 +19,15 @@ const WARN_AFTER_BUNDLE_SIZE = 250 * 1024; //kb
 
 const WebpackFinalConfig = require('../core/WebpackFinalConfig');
 const createBuildCompiler = require('../util/createBuildCompiler');
-const args = {};
-function setupArgs() {
-    args.version = version.nextVersion();
+const options = {};
+function setupOptions() {
+    options.buildVersion = version.nextVersion();
 }
-setupArgs();
-
+setupOptions();
+const useTypescript = fs.existsSync(paths.tsConfig);
+options.useTypescript = useTypescript;
 function build() {
-    const webpackFinalConfig = new WebpackFinalConfig(args);
+    const webpackFinalConfig = new WebpackFinalConfig(options, paths);
     const finalConfig = webpackFinalConfig.toWebpack();
     const compiler = createBuildCompiler(finalConfig);
     console.log(chalk.blueBright('start building...'));
@@ -33,11 +35,13 @@ function build() {
     compiler.run((err, stats) => {
         clearConsole();
         if (err) {
-            console.log(`build failed...(T＿T)`);
+            console.log(chalk.red('Failed to compile.\n'));
             console.log(err);
             process.exit(1);
         }
-        const messages = formatWebpackMessages(stats);
+        const messages = formatWebpackMessages(
+            stats.toJson({ all: false, warnings: true, errors: true })
+        );
         if (stats.hasErrors()) {
             console.log(chalk.redBright('Failed to build.'));
             messages.errors.forEach((e) => console.log(e));
@@ -66,7 +70,12 @@ function build() {
     });
 }
 
-build();
+try {
+    build();
+} catch (error) {
+    console.log(chalk.red('Failed to compile.\n'));
+    console.log(error);
+}
 
 function printFileSize(dir) {
     const fileSizes = measureFileSize(dir);
