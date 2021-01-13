@@ -12,7 +12,7 @@ const argv = require('yargs-parser')(args);
 if (['dev', 'build'].includes(script)) {
     const result = spawn.sync(
         'node ',
-        [path.resolve(__dirname, `../commands/${script}.js`), '--port', argv.port],
+        [path.resolve(__dirname, `../commands/${script}.js`), '--port', argv.port || 3000],
         {
             stdio: 'inherit'
         }

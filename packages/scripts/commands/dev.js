@@ -10,7 +10,9 @@ const paths = require('../core/paths');
 const fs = require('fs');
 const logSymbols = require('log-symbols');
 const WebpackFinalConfig = require('../core/WebpackFinalConfig');
-const { choosePort, prepareUrls } = require('react-dev-utils/WebpackDevServerUtils');
+const { prepareUrls } = require('react-dev-utils/WebpackDevServerUtils');
+const portfinder = require('portfinder');
+
 const WebpackDevServer = require('webpack-dev-server');
 const chalk = require('chalk');
 const argv = require('yargs-parser')(process.argv.slice(2));
@@ -32,7 +34,7 @@ function setupOptions() {
 
 setupOptions();
 
-choosePort(host, defaultPort).then((port) => {
+portfinder.getPortPromise({ port: defaultPort, host }).then((port) => {
     if (port === null) {
         process.exit(1);
     }
