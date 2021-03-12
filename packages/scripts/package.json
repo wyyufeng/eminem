@@ -37,7 +37,7 @@
     "gzip-size": "^5.1.1",
     "is-root": "^2.1.0",
     "log-symbols": "^4.0.0",
-    "react-dev-utils": "^10.2.1",
+    "react-dev-utils": "^11.0.4",
     "sharp": "^0.26.0",
     "webpack": "^4.43.0",
     "webpack-bundle-analyzer": "^3.8.0",
