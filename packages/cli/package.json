@@ -17,17 +17,17 @@
     "index.js"
   ],
   "dependencies": {
-    "chalk": "^4.0.0",
-    "commander": "^5.0.0",
-    "cross-env": "^7.0.2",
-    "cross-spawn": "^7.0.2",
-    "fork-ts-checker-webpack-plugin": "^5.2.0",
-    "fs-extra": "^9.0.0",
-    "inquirer": "^7.1.0",
-    "log-symbols": "^4.0.0",
-    "sharp": "^0.26.0",
+    "chalk": "^4.1.1",
+    "commander": "^7.2.0",
+    "cross-env": "^7.0.3",
+    "cross-spawn": "^7.0.3",
+    "fork-ts-checker-webpack-plugin": "^6.2.10",
+    "fs-extra": "^10.0.0",
+    "inquirer": "^8.1.0",
+    "log-symbols": "^5.0.0",
+    "sharp": "^0.28.3",
     "validate-npm-package-name": "^3.0.0",
-    "webpack-log": "^3.0.1"
+    "webpack-log": "^3.0.2"
   },
   "gitHead": "e23d3e340f2d57f68b7a60ba99aa805c02acd634"
 }
