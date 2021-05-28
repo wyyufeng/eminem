@@ -36,7 +36,7 @@
     "fs-extra": "^10.0.0",
     "gzip-size": "^6.0.0",
     "is-root": "^3.0.0",
-    "log-symbols": "^5.0.0",
+    "log-symbols": "^4.1.0",
     "react-dev-utils": "^11.0.4",
     "webpack": "^5.38.1",
     "webpack-bundle-analyzer": "^4.4.2",

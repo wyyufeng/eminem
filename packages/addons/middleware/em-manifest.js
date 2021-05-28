@@ -1,9 +1,11 @@
 const path = require('path');
 const isImage = require('is-image');
+const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
+
 module.exports = (publicPath) => (context) => {
     context
         .plugin('ManifestPlugin')
-        .use(require.resolve('webpack-manifest-plugin'), [
+        .use(WebpackManifestPlugin, [
             {
                 fileName: `assets-manifest.v${context.buildVersion}.json`,
                 publicPath: publicPath,

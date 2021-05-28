@@ -1869,10 +1869,10 @@
   dependencies:
     "has-symbols" "^1.0.1"
 
-"is-unicode-supported@^1.0.0":
-  "integrity" "sha512-TfeaLetCvWAJ/QjG8zBbr0H2LXE0m/Oatp25w0kgU2T/N+Xd2VMV3ENm/h3H4/ajBG9euaK2gsqipL4aCz8lTQ=="
-  "resolved" "https://registry.npmjs.org/is-unicode-supported/-/is-unicode-supported-1.0.0.tgz"
-  "version" "1.0.0"
+"is-unicode-supported@^0.1.0":
+  "integrity" "sha512-knxG2q4UC3u8stRGyAVJCOdxFmv5DZiRcdlIaAQXAbSfJya+OhopNotLQrstBhququ4ZpuKbDc/8S6mgXgPFPw=="
+  "resolved" "https://registry.npmjs.org/is-unicode-supported/-/is-unicode-supported-0.1.0.tgz"
+  "version" "0.1.0"
 
 "is-windows@^1.0.2":
   "integrity" "sha1-0YUOuXkezRjmGCzhKjDzlmNLsZ0="
@@ -2038,13 +2038,13 @@
   "resolved" "https://registry.npmjs.org/lodash/-/lodash-4.17.21.tgz"
   "version" "4.17.21"
 
-"log-symbols@^5.0.0":
-  "integrity" "sha512-zBsSKauX7sM0kcqrf8VpMRPqcWzU6a/Wi7iEl0QlVSCiIZ4CctaLdfVdiZUn6q2/nenyt392qJqpw9FhNAwqxQ=="
-  "resolved" "https://registry.npmjs.org/log-symbols/-/log-symbols-5.0.0.tgz"
-  "version" "5.0.0"
+"log-symbols@^4.1.0":
+  "integrity" "sha512-8XPvpAA8uyhfteu8pIvQxpJZ7SYYdpUivZpGy6sFsBuKRY/7rQGavedeB8aK+Zkyq6upMFVL/9AW6vOYzfRyLg=="
+  "resolved" "https://registry.npmjs.org/log-symbols/-/log-symbols-4.1.0.tgz"
+  "version" "4.1.0"
   dependencies:
     "chalk" "^4.1.0"
-    "is-unicode-supported" "^1.0.0"
+    "is-unicode-supported" "^0.1.0"
 
 "loglevel@^1.6.8":
   "integrity" "sha1-iiX7ddCSIw7NRFcnDYC1TigBEXE="
